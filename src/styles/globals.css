@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-bg: #fff8e7;
-  --color-text: #2c3e50;
-  --color-accent: #3b82b6;
-  --color-accent-light: #dbeafe;
-  --color-card: #ffffff;
+  --color-cream: #fff8e7;
+  --color-ink: #2c3e50;
   --color-muted: #64748b;
+  --color-fade: #94a3b8;
+  --color-card: #ffffff;
+  --color-border: #1e293b;
   --font-hand: "Patrick Hand", "Noto Sans SC", cursive;
   --font-mono: "Space Mono", monospace;
 }
 
-* {
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -22,15 +22,14 @@ html {
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: var(--color-cream);
+  color: var(--color-ink);
   font-family: var(--font-hand);
   font-size: 1.125rem;
   line-height: 1.7;
   overflow-x: hidden;
 }
 
-/* Sketchy border — signature style from reference */
 .sketchy-border {
   border: 2px solid #1e293b;
   border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
@@ -43,7 +42,6 @@ body {
   box-shadow: 3px 3px 0px 0px rgba(30, 41, 59, 1);
 }
 
-/* Hide scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

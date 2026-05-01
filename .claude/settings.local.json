@@ -5,7 +5,14 @@
       "WebFetch(domain:coderserio.github.io)",
       "mcp__web-reader__webReader",
       "mcp__web-search-prime__web_search_prime",
-      "Bash(curl -s -L \"https://coderserio.github.io/vue-source-book/\")"
+      "Bash(curl -s -L \"https://coderserio.github.io/vue-source-book/\")",
+      "Bash(npm run *)",
+      "Bash(curl -s \"http://localhost:3000\")",
+      "Bash(npx tsc *)",
+      "Bash(taskkill //F //IM \"node.exe\")",
+      "Bash(rm -rf \"D:/react/lec/.next\")",
+      "Bash(curl *)",
+      "Bash(grep -oP 'className:\"[^\"]{0,100}\"' \"D:/react/lec/tmp_ref.js\")"
     ]
   }
 }
