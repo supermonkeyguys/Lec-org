@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: #fff8e7;
+  --color-text: #2c3e50;
+  --color-accent: #3b82b6;
+  --color-accent-light: #dbeafe;
+  --color-card: #ffffff;
+  --color-muted: #64748b;
+  --font-hand: "Patrick Hand", "Noto Sans SC", cursive;
+  --font-mono: "Space Mono", monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-hand);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* Sketchy border — signature style from reference */
+.sketchy-border {
+  border: 2px solid #1e293b;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: 4px 4px 0px 0px rgba(30, 41, 59, 1);
+}
+
+.sketchy-border-sm {
+  border: 1.5px solid #1e293b;
+  border-radius: 200px 20px 180px 20px / 20px 180px 20px 200px;
+  box-shadow: 3px 3px 0px 0px rgba(30, 41, 59, 1);
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "WebFetch(domain:coderserio.github.io)",
+      "mcp__web-reader__webReader",
+      "mcp__web-search-prime__web_search_prime",
+      "Bash(curl -s -L \"https://coderserio.github.io/vue-source-book/\")"
+    ]
+  }
+}
