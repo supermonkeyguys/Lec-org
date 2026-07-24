@@ -14,9 +14,8 @@ export interface TeamInfo {
 export const teamInfo: TeamInfo = {
   name: "LEC 实验室",
   nameEn: "LEC Lab",
-  founded: 2014,
-  mission:
-    "探索计算机科学的边界，培养热爱技术、敢于实践的工程师。我们相信最好的学习方式是动手创造，在解决真实问题的过程中成长。",
+  founded: 2010,
+  mission: "学以致用，服务学校，走向社会",
   values: [
     {
       title: "实践驱动",
