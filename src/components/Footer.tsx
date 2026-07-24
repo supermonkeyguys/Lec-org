@@ -4,7 +4,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="snap-start min-h-[40vh] flex flex-col items-center justify-center py-16 px-6 text-center border-t-2 border-ink/10">
+    <footer className="site-section flex flex-col items-center justify-center border-t-2 border-ink/10 px-6 py-16 text-center">
       <img
         src="/logo.jpg"
         alt={teamInfo.name}
