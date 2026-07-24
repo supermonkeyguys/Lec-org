@@ -21,6 +21,10 @@ html {
   scroll-behavior: smooth;
 }
 
+:root {
+  --site-nav-safe-offset: calc(4rem + env(safe-area-inset-top));
+}
+
 body {
   background-color: var(--color-cream);
   color: var(--color-ink);
@@ -31,15 +35,18 @@ body {
 }
 
 .top-nav {
+  min-height: var(--site-nav-safe-offset);
   padding-top: env(safe-area-inset-top);
 }
 
 .site-scroll {
   scroll-snap-type: y mandatory;
+  scroll-padding-block-start: var(--site-nav-safe-offset);
 }
 
 .site-section {
   min-height: 100svh;
+  padding-block-start: var(--site-nav-safe-offset);
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
