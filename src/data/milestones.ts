@@ -8,7 +8,8 @@ export const milestones: Milestone[] = [
   {
     year: 2010,
     title: "团队成立",
-    description: "团队于 2010 年 6 月成立，开始服务学校的技术实践活动。",
+    description:
+      "临时节点（待正式资料核验）：团队于 2010 年 6 月成立；其余信息将在正式资料到位后替换。",
   },
   {
     year: 2015,
