@@ -6,7 +6,7 @@ const emojis = ["🛠️", "🤝", "📈", "📜"];
 
 export default function Mission() {
   return (
-    <section id="mission" className="snap-start min-h-screen flex flex-col justify-center py-16 px-6">
+    <section id="mission" className="site-section flex flex-col justify-center py-16 px-6">
       <div className="max-w-4xl mx-auto">
         <motion.div {...sectionFade}>
           <p className="font-mono text-xs text-muted mb-2 tracking-widest uppercase text-center">

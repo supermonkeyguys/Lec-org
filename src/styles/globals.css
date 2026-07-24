@@ -30,6 +30,36 @@ body {
   overflow-x: hidden;
 }
 
+.top-nav {
+  padding-top: env(safe-area-inset-top);
+}
+
+.site-scroll {
+  scroll-snap-type: y mandatory;
+}
+
+.site-section {
+  min-height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .site-scroll {
+    scroll-snap-type: none;
+  }
+
+  .site-section {
+    min-height: auto;
+    scroll-snap-stop: normal;
+  }
+}
+
 .sketchy-border {
   border: 2px solid #1e293b;
   border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;

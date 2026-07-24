@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="snap-start min-h-screen flex items-center justify-center px-6 text-center relative overflow-hidden"
+      className="site-section flex items-center justify-center px-6 text-center relative overflow-hidden"
     >
       <div className="absolute top-20 left-20 w-16 h-16 rounded-full border-2 border-ink/20 animate-float" />
       <div className="absolute bottom-32 right-24 w-24 h-24 rounded-full border-2 border-ink/10 animate-float" style={{ animationDelay: "2s" }} />

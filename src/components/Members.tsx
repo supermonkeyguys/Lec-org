@@ -54,7 +54,7 @@ export default function Members() {
   );
 
   return (
-    <section id="members" className="snap-start min-h-screen flex flex-col justify-center py-16 px-6">
+    <section id="members" className="site-section flex flex-col justify-center py-16 px-6">
       <div className="max-w-5xl mx-auto">
         <motion.div {...sectionFade}>
           <p className="font-mono text-xs text-muted mb-2 tracking-widest uppercase text-center">
