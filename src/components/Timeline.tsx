@@ -1,20 +1,29 @@
 import { motion } from "framer-motion";
-import { milestones } from "@/data/milestones";
-import { sectionFade, itemFade } from "@/config/animations";
+import { historyContent, milestones } from "@/data/milestones";
+import {
+  itemFade,
+  sectionFade,
+  usePrefersReducedMotion,
+} from "@/config/animations";
 
 export default function Timeline() {
+  const reducedMotion = usePrefersReducedMotion();
+
   return (
     <section id="history" className="site-section flex flex-col justify-center py-16 px-6">
       <div className="max-w-3xl mx-auto">
-        <motion.div {...sectionFade}>
+        <motion.div {...sectionFade(Boolean(reducedMotion))}>
           <p className="font-mono text-xs text-muted mb-2 tracking-widest uppercase text-center">
-            Our Story
+            {historyContent.eyebrow}
           </p>
           <h2 className="text-4xl sm:text-5xl font-bold text-ink text-center mb-4">
-            团队历史
+            {historyContent.title}
           </h2>
           <p className="text-center text-muted mb-16 text-lg">
-            十年，从一张白板到遍布各地的校友网络
+            {historyContent.subtitle}
+          </p>
+          <p className="mb-12 text-center font-mono text-xs text-fade">
+            {historyContent.statusLabel}
           </p>
         </motion.div>
 
@@ -25,8 +34,8 @@ export default function Timeline() {
             const isLeft = i % 2 === 0;
             return (
               <motion.div
-                key={milestone.year}
-                {...itemFade(Math.min(0.05 * i, 0.3))}
+                key={milestone.id}
+                {...itemFade(Math.min(0.05 * i, 0.3), Boolean(reducedMotion))}
                 className="relative flex justify-center mb-12"
               >
                 <div className="absolute left-1/2 w-3 h-3 bg-ink rounded-full -translate-x-1/2 mt-5 z-10" />
@@ -38,13 +47,16 @@ export default function Timeline() {
                 >
                   <div className="sketchy-border bg-card p-5 text-left">
                     <span className="font-mono text-sm text-muted">
-                      {milestone.year}
+                      {milestone.dateLabel}
                     </span>
                     <h3 className="text-lg font-bold text-ink mt-1 mb-2">
                       {milestone.title}
                     </h3>
                     <p className="text-muted text-base leading-relaxed">
                       {milestone.description}
+                    </p>
+                    <p className="mt-3 font-mono text-xs text-fade">
+                      {milestone.sourceNote}
                     </p>
                   </div>
                 </div>

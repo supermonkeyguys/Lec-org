@@ -3,11 +3,11 @@ import { milestones } from "./milestones";
 
 describe("temporary milestone data", () => {
   it("marks the verified 2010 founding fact as temporary and replaceable", () => {
-    const foundingMilestone = milestones.find(
-      (milestone) => milestone.year === 2010,
+    const foundingMilestone = milestones.find((milestone) =>
+      milestone.dateLabel.includes("2010"),
     );
 
-    expect(foundingMilestone?.description).toContain("临时节点");
-    expect(foundingMilestone?.description).toContain("待正式资料核验");
+    expect(foundingMilestone?.sourceStatus).toBe("temporary");
+    expect(foundingMilestone?.sourceNote).toContain("待正式历史资料核验");
   });
 });

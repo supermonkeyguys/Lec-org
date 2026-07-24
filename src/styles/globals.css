@@ -51,12 +51,26 @@ body {
   scroll-snap-stop: always;
 }
 
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 :focus-visible {
   outline: 3px solid var(--color-ink);
   outline-offset: 3px;
 }
 
-@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+@media (max-width: 767px) {
   .site-scroll {
     scroll-snap-type: none;
   }
@@ -64,6 +78,31 @@ body {
   .site-section {
     min-height: auto;
     scroll-snap-stop: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .site-scroll {
+    scroll-snap-type: none;
+  }
+
+  .site-section {
+    min-height: auto;
+    scroll-snap-stop: normal;
+  }
+
+  .animate-float {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
   }
 }
 

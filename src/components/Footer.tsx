@@ -4,7 +4,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="site-section flex flex-col items-center justify-center border-t-2 border-ink/10 px-6 py-16 text-center">
+    <footer className="flex flex-col items-center justify-center border-t-2 border-ink/10 px-6 py-16 text-center">
       <img
         src="/logo.jpg"
         alt={teamInfo.name}
@@ -14,10 +14,10 @@ export default function Footer() {
         {teamInfo.name}
       </p>
       <p className="font-mono text-sm text-muted mb-4">
-        Est. {teamInfo.founded} — {currentYear}
+        {teamInfo.content.heroMeta} — {currentYear}
       </p>
       <p className="text-sm text-fade">
-        Made with passion · Built by LEC members
+        {teamInfo.content.footerTagline}
       </p>
     </footer>
   );

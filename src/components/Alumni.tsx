@@ -1,5 +1,6 @@
 import {
   alumniMembers,
+  alumniContent,
   outcomeLabels,
   type AlumniOutcome,
 } from "@/data/alumni";
@@ -28,18 +29,18 @@ export default function Alumni() {
       <div className="mx-auto w-full max-w-5xl">
         <div className="text-center">
           <p className="mb-2 font-mono text-xs tracking-widest text-muted uppercase">
-            Alumni Outcomes
+            {alumniContent.eyebrow}
           </p>
           <h2 className="mb-4 text-4xl font-bold text-ink sm:text-5xl">
-            往届优秀成员
+            {alumniContent.title}
           </h2>
           <p className="mb-16 text-lg text-muted">
-            Mock 展示，正式资料待 Excel 导入后替换
+            {alumniContent.statusMessage}
           </p>
         </div>
 
         {alumniByCohort.length === 0 ? (
-          <p className="text-center text-muted">优秀成员资料整理中</p>
+          <p className="text-center text-muted">{alumniContent.emptyMessage}</p>
         ) : (
           <div className="space-y-12">
             {alumniByCohort.map(([cohort, cohortMembers]) => (

@@ -15,3 +15,12 @@ it("reserves the shared navigation offset at the start of every site section", (
     "padding-block-start: var(--site-nav-safe-offset);"
   );
 });
+
+it("disables native smooth scrolling and floating animation for reduced motion", () => {
+  const reducedMotionRule = globalStyles.slice(
+    globalStyles.indexOf("@media (prefers-reduced-motion: reduce)"),
+  );
+
+  expect(reducedMotionRule).toContain("scroll-behavior: auto");
+  expect(reducedMotionRule).toContain("animation: none");
+});

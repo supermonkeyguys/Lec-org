@@ -15,6 +15,13 @@ export const outcomeLabels: Record<AlumniOutcome, string> = {
   employment: "就业",
 };
 
+export const alumniContent = {
+  eyebrow: "Alumni Outcomes",
+  title: "往届优秀成员",
+  statusMessage: "Mock 展示，正式资料待 Excel 导入后替换",
+  emptyMessage: "优秀成员资料整理中",
+} as const;
+
 // Mock data for the alumni section. Replace with verified records when available.
 export const alumniMembers: AlumniMember[] = [
   {

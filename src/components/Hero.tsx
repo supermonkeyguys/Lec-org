@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { teamInfo } from "@/data/team";
+import { usePrefersReducedMotion } from "@/config/animations";
 
 export default function Hero() {
+  const reducedMotion = usePrefersReducedMotion();
+
   return (
     <section
       id="hero"
@@ -14,9 +17,9 @@ export default function Hero() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: reducedMotion ? 0 : 0.8, ease: "easeOut" }}
         className="max-w-3xl"
       >
         <img
@@ -25,7 +28,7 @@ export default function Hero() {
           className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-8 sketchy-border object-contain bg-card"
         />
         <p className="font-mono text-sm text-muted mb-4 tracking-widest uppercase">
-          {teamInfo.nameEn} · Est. {teamInfo.founded}
+          {teamInfo.nameEn} · {teamInfo.content.heroMeta}
         </p>
         <h1 className="text-5xl sm:text-7xl font-bold text-ink leading-tight mb-8">
           {teamInfo.name}
@@ -37,22 +40,13 @@ export default function Hero() {
         <motion.a
           href="#members"
           className="inline-block mt-12 sketchy-border bg-card px-8 py-3 text-ink no-underline font-mono text-sm hover:-translate-y-0.5 transition-transform"
-          whileHover={{ y: -2 }}
-          whileTap={{ y: 0 }}
+          whileHover={reducedMotion ? undefined : { y: -2 }}
+          whileTap={reducedMotion ? undefined : { y: 0 }}
         >
-          认识我们的成员 →
+          {teamInfo.content.heroCta}
         </motion.a>
       </motion.div>
 
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
 }
