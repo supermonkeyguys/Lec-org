@@ -16,6 +16,15 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## 内容维护
+
+- 团队信息：`src/data/team.ts`
+- 普通成员：`src/data/members.ts`
+- 优秀成员：`src/data/alumni.ts`
+- 里程碑：`src/data/milestones.ts`
+
+Excel 资料到来后，只需替换以上数据文件。
+
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
 [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
