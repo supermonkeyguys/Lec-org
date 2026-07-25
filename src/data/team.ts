@@ -4,6 +4,11 @@ export interface TeamFact {
   description: string;
 }
 
+export interface TeamAboutImage {
+  src: string;
+  alt: string;
+}
+
 export interface TeamInfo {
   name: string;
   nameEn: string;
@@ -12,6 +17,7 @@ export interface TeamInfo {
   weeklyAttendanceHours: number;
   mission: string;
   facts: TeamFact[];
+  aboutImages: TeamAboutImage[];
   content: {
     heroMeta: string;
     heroCta: string;
@@ -50,6 +56,14 @@ export const teamInfo: TeamInfo = {
       value: "竞赛 / 项目实践",
       description: "把所学知识用于竞赛准备和项目实践。",
     },
+  ],
+  aboutImages: [
+    { src: "/about/lec-about-01.webp", alt: "乐程团队活动照片 1" },
+    { src: "/about/lec-about-02.webp", alt: "乐程团队活动照片 2" },
+    { src: "/about/lec-about-03.webp", alt: "乐程团队活动照片 3" },
+    { src: "/about/lec-about-04.webp", alt: "乐程团队活动照片 4" },
+    { src: "/about/lec-about-05.webp", alt: "乐程团队活动照片 5" },
+    { src: "/about/lec-about-06.webp", alt: "乐程团队活动照片 6" },
   ],
   content: {
     heroMeta: "2010 年 6 月成立",
