@@ -58,12 +58,12 @@ export const teamInfo: TeamInfo = {
     },
   ],
   aboutImages: [
-    { src: "/about/lec-about-01.webp", alt: "乐程团队活动照片 1" },
-    { src: "/about/lec-about-02.webp", alt: "乐程团队活动照片 2" },
-    { src: "/about/lec-about-03.webp", alt: "乐程团队活动照片 3" },
-    { src: "/about/lec-about-04.webp", alt: "乐程团队活动照片 4" },
-    { src: "/about/lec-about-05.webp", alt: "乐程团队活动照片 5" },
-    { src: "/about/lec-about-06.webp", alt: "乐程团队活动照片 6" },
+    { src: "/about/lec-about-01.webp", alt: "团队成员围坐火锅聚餐" },
+    { src: "/about/lec-about-02.webp", alt: "团队成员乘坐商场扶梯" },
+    { src: "/about/lec-about-03.webp", alt: "夜间树下的团队成员与小狗合影" },
+    { src: "/about/lec-about-04.webp", alt: "身穿学士服的团队成员在校园合影" },
+    { src: "/about/lec-about-05.webp", alt: "成员在橙白热气球装置前集体合影" },
+    { src: "/about/lec-about-06.webp", alt: "户外树下手持风车与礼物的团队成员合影" },
   ],
   content: {
     heroMeta: "2010 年 6 月成立",

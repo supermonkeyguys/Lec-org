@@ -14,4 +14,15 @@ describe("PDF-aligned team information", () => {
       /十年|10 年积累|白板|校友网络|代码 review|服务器/,
     );
   });
+
+  it("uses image-specific descriptions for the About photo wall", () => {
+    const altTexts = teamInfo.aboutImages.map((image) => image.alt);
+
+    expect(altTexts).not.toContain("乐程团队活动照片 1");
+    expect(altTexts).not.toContain("乐程团队活动照片 2");
+    expect(altTexts).not.toContain("乐程团队活动照片 3");
+    expect(altTexts).not.toContain("乐程团队活动照片 4");
+    expect(altTexts).not.toContain("乐程团队活动照片 5");
+    expect(altTexts).not.toContain("乐程团队活动照片 6");
+  });
 });
