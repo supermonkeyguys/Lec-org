@@ -1,4 +1,5 @@
 import { teamInfo } from "@/data/team";
+import { assetPath } from "@/lib/assetPath";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -6,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="snap-start min-h-[40vh] flex flex-col items-center justify-center py-16 px-6 text-center border-t-2 border-ink/10">
       <img
-        src="/logo.jpg"
+        src={assetPath("/logo.jpg")}
         alt={teamInfo.name}
         className="w-12 h-12 mx-auto mb-4 sketchy-border-sm object-contain bg-card"
       />

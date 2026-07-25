@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { sections } from "@/config/sections";
+import { assetPath } from "@/lib/assetPath";
 
 export default function TocFloating() {
   const [active, setActive] = useState(sections[0].id);
@@ -76,7 +77,7 @@ export default function TocFloating() {
 
         <div className="pl-10">
           <img
-            src="/logo.jpg"
+            src={assetPath("/logo.jpg")}
             alt="LEC"
             className="w-8 h-8 mb-3 sketchy-border-sm object-contain bg-card"
           />

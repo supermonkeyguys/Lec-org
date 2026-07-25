@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { teamInfo } from "@/data/team";
+import { assetPath } from "@/lib/assetPath";
 
 export default function Hero() {
   return (
@@ -20,7 +21,7 @@ export default function Hero() {
         className="max-w-3xl"
       >
         <img
-          src="/logo.jpg"
+          src={assetPath("/logo.jpg")}
           alt={teamInfo.name}
           className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-8 sketchy-border object-contain bg-card"
         />
