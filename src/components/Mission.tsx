@@ -31,6 +31,17 @@ export default function Mission() {
           </div>
         </motion.div>
 
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 mb-12">
+          {teamInfo.aboutImages.map((image) => (
+            <img
+              key={image.src}
+              src={image.src}
+              alt={image.alt}
+              className="aspect-[4/3] w-full rounded-2xl object-cover sketchy-border-sm"
+            />
+          ))}
+        </div>
+
         <div className="grid sm:grid-cols-2 gap-6">
           {teamInfo.facts.map((fact, i) => (
             <motion.div
