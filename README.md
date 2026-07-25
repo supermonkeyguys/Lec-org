@@ -22,8 +22,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - 普通成员：`src/data/members.ts`
 - 优秀成员：`src/data/alumni.ts`
 - 里程碑：`src/data/milestones.ts`
+- 团队成就：`src/data/achievements.ts`
+- 技术方向：`src/data/directions.ts`
+- 招新信息：`src/data/recruitment.ts`
+- 团队图片：`public/about/`
+- 招新二维码：`public/recruitment/`
 
-Excel 资料到来后，只需替换以上数据文件。
+Excel 或正式资料到来后，只需替换以上数据文件与本地资源。
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 

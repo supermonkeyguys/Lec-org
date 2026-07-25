@@ -12,4 +12,5 @@ export const sections: SectionItem[] = [
   { id: "members", label: "成员", num: "05" },
   { id: "alumni", label: "优秀成员", num: "06" },
   { id: "history", label: "历史", num: "07" },
+  { id: "recruitment", label: "招新", num: "08" },
 ];
