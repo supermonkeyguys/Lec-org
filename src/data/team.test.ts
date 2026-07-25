@@ -18,11 +18,13 @@ describe("PDF-aligned team information", () => {
   it("uses image-specific descriptions for the About photo wall", () => {
     const altTexts = teamInfo.aboutImages.map((image) => image.alt);
 
-    expect(altTexts).not.toContain("乐程团队活动照片 1");
-    expect(altTexts).not.toContain("乐程团队活动照片 2");
-    expect(altTexts).not.toContain("乐程团队活动照片 3");
-    expect(altTexts).not.toContain("乐程团队活动照片 4");
-    expect(altTexts).not.toContain("乐程团队活动照片 5");
-    expect(altTexts).not.toContain("乐程团队活动照片 6");
+    expect(altTexts).toEqual([
+      "团队成员围坐火锅聚餐",
+      "团队成员乘坐商场扶梯",
+      "夜间树下的团队成员与小狗合影",
+      "身穿学士服的团队成员在校园合影",
+      "成员在橙白热气球装置前集体合影",
+      "户外树下手持风车与礼物的团队成员合影",
+    ]);
   });
 });
