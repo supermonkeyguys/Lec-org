@@ -1,12 +1,22 @@
 import { rename, unlink, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import XLSX from "xlsx";
+import ExcelJS from "exceljs";
 
 const expectedHeaders = ["年级", "方向", "专业", "姓名", "毕业去向"];
 const allowedDirections = new Set(["保研", "考研", "深造", "就业", "考公"]);
 const generatedRecordsPath = resolve(process.cwd(), "src/data/member-records.generated.ts");
-const cellText = (value) => String(value ?? "").trim();
+const isBlankCell = (value) => value === null
+  || value === undefined
+  || (typeof value === "string" && value.trim() === "");
+const optionalText = (value) => (typeof value === "string" ? value.trim() : "");
+const validatedContextText = (value, field, sourceRow) => {
+  if (isBlankCell(value)) return "";
+  if (typeof value !== "string") {
+    throw new Error(`Invalid ${field} at Sheet1 row ${sourceRow}`);
+  }
+  return value.trim();
+};
 const gradePattern = /^(19|20|21|22|23|24|25)(?:级)?$/;
 const parseSourceCohort = (grade) => {
   const match = grade.match(gradePattern);
@@ -32,8 +42,8 @@ export function normaliseRows(rows, merges = []) {
   let direction = "";
 
   return rows.flatMap(([nextGrade, nextDirection, major, name, destination], rowIndex) => {
-    const nextGradeText = cellText(nextGrade);
-    const nextDirectionText = cellText(nextDirection);
+    const nextGradeText = optionalText(nextGrade);
+    const nextDirectionText = optionalText(nextDirection);
     if (nextGradeText) {
       grade = nextGradeText;
       direction = "";
@@ -42,15 +52,15 @@ export function normaliseRows(rows, merges = []) {
     else if (!isMergedContinuation(merges, rowIndex + 1, 1)) direction = "";
 
     const cohort = parseSourceCohort(grade);
-    const memberName = cellText(name);
+    const memberName = optionalText(name);
     if (!Number.isInteger(cohort) || !memberName) return [];
 
     return [{
       cohort: 2000 + cohort,
       direction,
-      major: cellText(major),
+      major: optionalText(major),
       name: memberName,
-      destination: cellText(destination),
+      destination: optionalText(destination),
     }];
   });
 }
@@ -108,15 +118,16 @@ ${renderAlumni(records.alumniMembers)}
 `;
 }
 
-const isEmptyRow = (row) => row.every((value) => cellText(value) === "");
+const isEmptyRow = (row) => row.every(isBlankCell);
 
 function validateSourceRows(rows, merges) {
   let grade = "";
   let direction = "";
 
   rows.forEach(([nextGrade, nextDirection, major, name, destination], rowIndex) => {
-    const nextGradeText = cellText(nextGrade);
-    const nextDirectionText = cellText(nextDirection);
+    const sourceRow = rowIndex + 2;
+    const nextGradeText = validatedContextText(nextGrade, "cohort", sourceRow);
+    const nextDirectionText = validatedContextText(nextDirection, "direction", sourceRow);
     if (nextGradeText) {
       grade = nextGradeText;
       direction = "";
@@ -131,13 +142,13 @@ function validateSourceRows(rows, merges) {
 
     const cohort = parseSourceCohort(grade);
     if (!Number.isInteger(cohort)) {
-      throw new Error(`Invalid cohort at Sheet1 row ${rowIndex + 2}`);
+      throw new Error(`Invalid cohort at Sheet1 row ${sourceRow}`);
     }
-    if (!cellText(name)) {
-      throw new Error(`Member name is required at Sheet1 row ${rowIndex + 2}`);
+    if (typeof name !== "string" || !name.trim()) {
+      throw new Error(`Member name must be a non-empty string at Sheet1 row ${sourceRow}`);
     }
     if (direction && !allowedDirections.has(direction)) {
-      throw new Error(`Unknown direction at Sheet1 row ${rowIndex + 2}: ${direction}`);
+      throw new Error(`Unknown direction at Sheet1 row ${sourceRow}: ${direction}`);
     }
   });
 }
@@ -189,13 +200,48 @@ async function writeAtomically(outputPath, content) {
   }
 }
 
+const columnIndex = (label) => [...label].reduce(
+  (index, character) => (index * 26) + character.charCodeAt(0) - 64,
+  0,
+) - 1;
+
+const parseCellAddress = (address) => {
+  const match = /^([A-Z]+)([1-9]\d*)$/.exec(address);
+  if (!match) throw new Error(`Invalid worksheet cell address: ${address}`);
+  return { c: columnIndex(match[1]), r: Number.parseInt(match[2], 10) - 1 };
+};
+
+const parseMergeRange = (range) => {
+  const [start, end = start] = range.split(":");
+  return { s: parseCellAddress(start), e: parseCellAddress(end) };
+};
+
+const extractedCellValue = (cell, rowIndex, columnIndex) => {
+  if (rowIndex === 0 || columnIndex === 3) return cell.value;
+  if (columnIndex === 2 || columnIndex === 4) return cell.text.trim();
+  if (isBlankCell(cell.value)) return "";
+  if (["string", "number", "boolean"].includes(typeof cell.value)) return cell.text.trim();
+  return cell.value;
+};
+
+const worksheetRows = (sheet) => Array.from(
+  { length: sheet.rowCount },
+  (_, rowIndex) => Array.from({ length: sheet.columnCount }, (_, columnIndex) => {
+    const cell = sheet.getCell(rowIndex + 1, columnIndex + 1);
+    if (cell.isMerged && cell.master.address !== cell.address) return undefined;
+    return extractedCellValue(cell, rowIndex, columnIndex);
+  }),
+);
+
 export async function importMembers(inputPath, outputPath = generatedRecordsPath) {
-  const workbook = XLSX.readFile(inputPath, { cellDates: false });
-  const sheet = workbook.Sheets.Sheet1;
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(inputPath);
+  const sheet = workbook.getWorksheet("Sheet1");
   if (!sheet) throw new Error("Workbook must contain Sheet1");
 
-  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-  const records = validateWorkbook(rows, sheet["!merges"] ?? []);
+  const rows = worksheetRows(sheet);
+  const merges = sheet.model.merges.map(parseMergeRange);
+  const records = validateWorkbook(rows, merges);
   await writeAtomically(outputPath, renderGeneratedRecords(records));
 
   return records;

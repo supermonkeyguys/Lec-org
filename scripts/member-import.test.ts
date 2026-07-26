@@ -1,8 +1,9 @@
+import { existsSync } from "node:fs";
 import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import {
   importMembers,
   mapOutcome,
@@ -12,6 +13,8 @@ import {
 } from "./member-import.mjs";
 
 const expectedHeaders = ["年级", "方向", "专业", "姓名", "毕业去向"];
+const sourceWorkbookPath = process.env.MEMBER_SOURCE_WORKBOOK
+  ?? "/Users/cookie/Library/Containers/com.tencent.qq/Data/Downloads/LEC近三年人员信息 (1).xlsx";
 
 const validRows = [
   ...Array.from({ length: 65 }, (_, index) => [
@@ -30,11 +33,17 @@ const validRows = [
   ]),
 ];
 
-const createWorkbook = async (directory: string, rows: unknown[][]) => {
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(rows), "Sheet1");
+const createWorkbook = async (
+  directory: string,
+  rows: unknown[][],
+  configureWorksheet?: (worksheet: ExcelJS.Worksheet) => void,
+) => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Sheet1");
+  worksheet.addRows(rows);
+  configureWorksheet?.(worksheet);
   const inputPath = join(directory, "members.xlsx");
-  await writeFile(inputPath, XLSX.write(workbook, { type: "buffer", bookType: "xlsx" }));
+  await workbook.xlsx.writeFile(inputPath);
   return inputPath;
 };
 
@@ -112,6 +121,30 @@ describe("member workbook normalization", () => {
     ]);
   });
 
+  it("uses temporary-workbook merge metadata for direction carry", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithDirectionMerge: unknown[][] = validRows.map((row) => [...row]);
+    rowsWithDirectionMerge[0][1] = "考公";
+    rowsWithDirectionMerge[1][0] = "";
+    rowsWithDirectionMerge[1][1] = "";
+    rowsWithDirectionMerge[2][0] = "";
+    rowsWithDirectionMerge[2][1] = "";
+    const inputPath = await createWorkbook(
+      directory,
+      [expectedHeaders, ...rowsWithDirectionMerge],
+      (worksheet) => worksheet.mergeCells("B2:B3"),
+    );
+    const outputPath = join(directory, "member-records.generated.ts");
+
+    const records = await importMembers(inputPath, outputPath);
+
+    expect(records.alumniMembers.slice(0, 3).map((record) => record.direction)).toEqual([
+      "考公",
+      "考公",
+      "",
+    ]);
+  });
+
   it("maps source directions to alumni outcomes", () => {
     expect(mapOutcome("深造")).toBe("graduate-exam");
     expect(mapOutcome("考公")).toBe("employment");
@@ -132,6 +165,19 @@ describe("member workbook normalization", () => {
       expectedHeaders,
       ["19级", "未知", "软件工程", "校友", "去向"],
     ])).toThrow(/direction/i);
+  });
+
+  it("rejects an unknown workbook direction before changing generated output", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithUnknownDirection = validRows.map((row) => [...row]);
+    rowsWithUnknownDirection[0][1] = "未知";
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithUnknownDirection]);
+    const outputPath = join(directory, "member-records.generated.ts");
+    const originalOutput = "export const preserved = true;\n";
+    await writeFile(outputPath, originalOutput);
+
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/direction/i);
+    await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
   });
 
   it("rejects a numeric zero direction instead of treating it as blank", () => {
@@ -186,6 +232,25 @@ describe("member workbook normalization", () => {
     await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
   });
 
+  it.each([
+    ["number", 123],
+    ["boolean", true],
+    ["formula", { formula: "\"公式名\"", result: "公式名" }],
+    ["rich text", { richText: [{ text: "富文本名" }] }],
+    ["date", new Date("2026-07-26T00:00:00.000Z")],
+  ])("rejects a %s name cell before changing generated output", async (_label, invalidName) => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithInvalidName: unknown[][] = validRows.map((row) => [...row]);
+    rowsWithInvalidName[0][3] = invalidName;
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithInvalidName]);
+    const outputPath = join(directory, "member-records.generated.ts");
+    const originalOutput = "export const preserved = true;\n";
+    await writeFile(outputPath, originalOutput);
+
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/name/i);
+    await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
+  });
+
   it.each(["19garbage", "19.5"])(
     "rejects malformed grade %s before changing generated output",
     async (malformedGrade) => {
@@ -217,4 +282,20 @@ describe("member workbook normalization", () => {
     expect(generatedOutput.match(/id: "member-/g)).toHaveLength(23);
     expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(65);
   });
+
+  it.runIf(existsSync(sourceWorkbookPath))(
+    "imports the real source workbook into 23/65 partitions",
+    async () => {
+      const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+      const outputPath = join(directory, "member-records.generated.ts");
+
+      await expect(importMembers(sourceWorkbookPath, outputPath)).resolves.toMatchObject({
+        currentMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2024 })]),
+        alumniMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2019 })]),
+      });
+      const generatedOutput = await readFile(outputPath, "utf8");
+      expect(generatedOutput.match(/id: "member-/g)).toHaveLength(23);
+      expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(65);
+    },
+  );
 });
