@@ -53,6 +53,15 @@ export function closestSectionIndex(
   root: HTMLElement,
   sectionElements: HTMLElement[],
 ) {
+  const containingSectionIndex = sectionElements.findIndex(
+    (section) =>
+      section.parentElement === root &&
+      section.offsetHeight > 0 &&
+      root.scrollTop >= section.offsetTop &&
+      root.scrollTop < section.offsetTop + section.offsetHeight,
+  );
+  if (containingSectionIndex !== -1) return containingSectionIndex;
+
   return sectionElements.reduce((closestIndex, section, index) => {
     const closestDistance = Math.abs(
       sectionElements[closestIndex].offsetTop - root.scrollTop,

@@ -69,8 +69,8 @@ function renderLayout() {
     mission: 1000,
     members: 2000,
     alumni: 3000,
-    history: 4000,
-    recruitment: 5000,
+    history: 5200,
+    recruitment: 6200,
   };
 
   Object.entries(offsets).forEach(([id, offsetTop]) => {
@@ -123,7 +123,7 @@ describe("scoped section navigation", () => {
 
   it.each([
     ["PageDown", 1000],
-    ["End", 5000],
+    ["End", 6200],
     ["Home", 0],
   ])("handles %s inside the scroll root", (key, expectedTop) => {
     const { root, scrollTo } = renderLayout();
@@ -181,7 +181,7 @@ describe("scoped section navigation", () => {
     const alumni = document.getElementById("alumni")!;
     Object.defineProperties(root, {
       clientHeight: { configurable: true, value: 1000 },
-      scrollHeight: { configurable: true, value: 5200 },
+      scrollHeight: { configurable: true, value: 7200 },
     });
     Object.defineProperties(alumni, {
       clientHeight: { configurable: true, value: 2200 },
@@ -201,7 +201,7 @@ describe("scoped section navigation", () => {
     const alumni = document.getElementById("alumni")!;
     Object.defineProperties(root, {
       clientHeight: { configurable: true, value: 1000 },
-      scrollHeight: { configurable: true, value: 5200 },
+      scrollHeight: { configurable: true, value: 7200 },
     });
     Object.defineProperties(alumni, {
       clientHeight: { configurable: true, value: 2200 },
@@ -217,7 +217,7 @@ describe("scoped section navigation", () => {
   });
 
   it.each([
-    ["lower", 4200, 120, 5000],
+    ["lower", 4200, 120, 5200],
     ["upper", 3000, -120, 2000],
   ])(
     "hands wheel navigation to the adjacent section at the oversized section's %s edge",
@@ -226,7 +226,7 @@ describe("scoped section navigation", () => {
       const alumni = document.getElementById("alumni")!;
       Object.defineProperties(root, {
         clientHeight: { configurable: true, value: 1000 },
-        scrollHeight: { configurable: true, value: 5200 },
+        scrollHeight: { configurable: true, value: 7200 },
       });
       Object.defineProperties(alumni, {
         clientHeight: { configurable: true, value: 2200 },
