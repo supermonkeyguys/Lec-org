@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { accessSync, constants, statSync } from "node:fs";
 import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -13,8 +14,27 @@ import {
 } from "./member-import.mjs";
 
 const expectedHeaders = ["年级", "方向", "专业", "姓名", "毕业去向"];
-const sourceWorkbookPath = process.env.MEMBER_SOURCE_WORKBOOK
-  ?? "/Users/cookie/Library/Containers/com.tencent.qq/Data/Downloads/LEC近三年人员信息 (1).xlsx";
+const localSourceWorkbookPath = "/Users/cookie/Library/Containers/com.tencent.qq/Data/Downloads/LEC近三年人员信息 (1).xlsx";
+const configuredSourceWorkbookPath = process.env.MEMBER_SOURCE_WORKBOOK;
+const sourceWorkbookPath = configuredSourceWorkbookPath ?? localSourceWorkbookPath;
+const isReadableFile = (path: string) => {
+  try {
+    accessSync(path, constants.R_OK);
+    return statSync(path).isFile();
+  } catch {
+    return false;
+  }
+};
+const sourceWorkbookIsReadable = isReadableFile(sourceWorkbookPath);
+const sourceWorkbookConfigurationError = process.env.CI && (
+  !configuredSourceWorkbookPath || !isReadableFile(configuredSourceWorkbookPath)
+)
+  ? `CI requires MEMBER_SOURCE_WORKBOOK to point to a readable original LEC workbook. ${
+    configuredSourceWorkbookPath
+      ? `Configured path is unreadable: ${configuredSourceWorkbookPath}.`
+      : "The variable is not set."
+  } No original workbook is committed.`
+  : undefined;
 
 const validRows = [
   ...Array.from({ length: 65 }, (_, index) => [
@@ -283,19 +303,68 @@ describe("member workbook normalization", () => {
     expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(65);
   });
 
-  it.runIf(existsSync(sourceWorkbookPath))(
+  it.skipIf(process.env.MEMBER_SOURCE_CONFIG_PROBE === "1").each([
+    ["is absent", undefined],
+    ["is unreadable", join(tmpdir(), `missing-member-source-${process.pid}.xlsx`)],
+  ])("fails clearly in CI when the real source workbook configuration %s", (_label, configuredPath) => {
+    const childEnvironment = {
+      ...process.env,
+      CI: "1",
+      MEMBER_SOURCE_CONFIG_PROBE: "1",
+    };
+    if (configuredPath) childEnvironment.MEMBER_SOURCE_WORKBOOK = configuredPath;
+    else delete childEnvironment.MEMBER_SOURCE_WORKBOOK;
+
+    const result = spawnSync(
+      "npm",
+      ["test", "--", "scripts/member-import.test.ts", "-t", "real source workbook"],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env: childEnvironment,
+      },
+    );
+    const output = `${result.stdout}\n${result.stderr}`;
+
+    expect(result.status).not.toBe(0);
+    expect(output).toContain(
+      "CI requires MEMBER_SOURCE_WORKBOOK to point to a readable original LEC workbook",
+    );
+  });
+
+  if (sourceWorkbookConfigurationError) {
+    it("requires MEMBER_SOURCE_WORKBOOK for the real source workbook in CI", () => {
+      throw new Error(sourceWorkbookConfigurationError);
+    });
+  }
+
+  it.runIf(sourceWorkbookIsReadable && !sourceWorkbookConfigurationError)(
     "imports the real source workbook into 23/65 partitions",
     async () => {
       const directory = await mkdtemp(join(tmpdir(), "member-import-"));
       const outputPath = join(directory, "member-records.generated.ts");
 
-      await expect(importMembers(sourceWorkbookPath, outputPath)).resolves.toMatchObject({
-        currentMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2024 })]),
-        alumniMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2019 })]),
+      const records = await importMembers(sourceWorkbookPath, outputPath);
+
+      expect(records.currentMembers).toHaveLength(23);
+      expect(records.alumniMembers).toHaveLength(65);
+      expect(records.currentMembers).toEqual(expect.arrayContaining([
+        { cohort: 2024, direction: "", major: "软工", name: "gyf", destination: "" },
+        { cohort: 2025, direction: "", major: "", name: "ws", destination: "" },
+      ]));
+      expect(records.alumniMembers).toContainEqual({
+        cohort: 2019,
+        direction: "",
+        major: "物联网",
+        name: "刘洪堃",
+        destination: "电科",
       });
       const generatedOutput = await readFile(outputPath, "utf8");
-      expect(generatedOutput.match(/id: "member-/g)).toHaveLength(23);
-      expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(65);
+      const goldenOutput = await readFile(
+        join(process.cwd(), "src/data/member-records.generated.ts"),
+        "utf8",
+      );
+      expect(generatedOutput).toBe(goldenOutput);
     },
   );
 });
