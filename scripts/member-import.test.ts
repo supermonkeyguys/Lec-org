@@ -1,9 +1,42 @@
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import XLSX from "xlsx";
 import {
+  importMembers,
   mapOutcome,
   normaliseRows,
   partitionRecords,
+  validateWorkbook,
 } from "./member-import.mjs";
+
+const expectedHeaders = ["年级", "方向", "专业", "姓名", "毕业去向"];
+
+const validRows = [
+  ...Array.from({ length: 65 }, (_, index) => [
+    `${19 + Math.floor(index / 13)}级`,
+    index % 2 === 0 ? "保研" : "",
+    "软件工程",
+    `校友${index + 1}`,
+    "去向",
+  ]),
+  ...Array.from({ length: 23 }, (_, index) => [
+    index < 12 ? "24级" : "25级",
+    "",
+    "软件工程",
+    `在读${index + 1}`,
+    "",
+  ]),
+];
+
+const createWorkbook = async (directory: string, rows: unknown[][]) => {
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(rows), "Sheet1");
+  const inputPath = join(directory, "members.xlsx");
+  await writeFile(inputPath, XLSX.write(workbook, { type: "buffer", bookType: "xlsx" }));
+  return inputPath;
+};
 
 describe("member workbook normalization", () => {
   const rows = [
@@ -86,5 +119,56 @@ describe("member workbook normalization", () => {
 
   it("partitions current members by cohort", () => {
     expect(partitionRecords(normaliseRows(rows)).currentMembers).toHaveLength(2);
+  });
+
+  it("requires the exact Sheet1 header row", () => {
+    expect(() => validateWorkbook([["年级", "方向", "专业", "姓名", "去向"]])).toThrow(
+      /headers/i,
+    );
+  });
+
+  it("rejects unknown source directions", () => {
+    expect(() => validateWorkbook([
+      expectedHeaders,
+      ["19级", "未知", "软件工程", "校友", "去向"],
+    ])).toThrow(/direction/i);
+  });
+
+  it("rejects malformed headers before changing generated output", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const inputPath = await createWorkbook(directory, [
+      ["年级", "方向", "专业", "姓名", "去向"],
+      ...validRows,
+    ]);
+    const outputPath = join(directory, "member-records.generated.ts");
+    const originalOutput = "export const preserved = true;\n";
+    await writeFile(outputPath, originalOutput);
+
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/headers/i);
+    await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
+  });
+
+  it("rejects incomplete records before changing generated output", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...validRows.slice(0, -1)]);
+    const outputPath = join(directory, "member-records.generated.ts");
+    const originalOutput = "export const preserved = true;\n";
+    await writeFile(outputPath, originalOutput);
+
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/23 current/i);
+    await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
+  });
+
+  it("writes the 23/65 partitions into one generated records module", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...validRows]);
+    const outputPath = join(directory, "member-records.generated.ts");
+
+    await expect(importMembers(inputPath, outputPath)).resolves.toMatchObject({
+      currentMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2024 })]),
+      alumniMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2019 })]),
+    });
+    await expect(readFile(outputPath, "utf8")).resolves.toContain("export const generatedMembers");
+    await expect(readFile(outputPath, "utf8")).resolves.toContain("export const generatedAlumniMembers");
   });
 });
