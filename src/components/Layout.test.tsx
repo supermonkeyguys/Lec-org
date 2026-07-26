@@ -173,6 +173,26 @@ describe("scoped section navigation", () => {
     expect(event.defaultPrevented).toBe(false);
     expect(scrollTo).not.toHaveBeenCalled();
   });
+
+  it("preserves root scrolling inside an oversized direct-child section", () => {
+    const { root, scrollTo } = renderLayout();
+    const alumni = document.getElementById("alumni")!;
+    Object.defineProperties(root, {
+      clientHeight: { configurable: true, value: 1000 },
+      scrollHeight: { configurable: true, value: 5200 },
+    });
+    Object.defineProperties(alumni, {
+      clientHeight: { configurable: true, value: 2200 },
+      offsetHeight: { configurable: true, value: 2200 },
+    });
+    root.scrollTop = 3200;
+
+    const event = createEvent.wheel(alumni, { deltaY: 120 });
+    fireEvent(alumni, event);
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
 });
 
 describe("reduced motion", () => {

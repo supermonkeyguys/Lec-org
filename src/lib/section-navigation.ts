@@ -35,6 +35,14 @@ export function shouldPreserveNativeScroll(
       const canScrollUp = current.scrollTop > 0;
       if ((deltaY > 0 && canScrollDown) || (deltaY < 0 && canScrollUp)) return true;
     }
+
+    if (current.parentElement === root && current.offsetHeight > root.clientHeight) {
+      const canScrollDown =
+        root.scrollTop + root.clientHeight < current.offsetTop + current.offsetHeight - 1;
+      const canScrollUp = root.scrollTop > current.offsetTop;
+      if ((deltaY > 0 && canScrollDown) || (deltaY < 0 && canScrollUp)) return true;
+    }
+
     current = current.parentElement;
   }
 
