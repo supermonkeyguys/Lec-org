@@ -37,6 +37,8 @@ export default function Mission() {
               key={image.src}
               src={image.src}
               alt={image.alt}
+              loading="lazy"
+              decoding="async"
               className="aspect-[4/3] w-full rounded-2xl object-cover sketchy-border-sm"
             />
           ))}

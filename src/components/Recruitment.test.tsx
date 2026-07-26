@@ -11,4 +11,12 @@ it("shows reusable recruitment details alongside its local QR image", () => {
     "src",
     "/recruitment/lec-recruitment-qr.webp",
   );
+  expect(screen.getByRole("img", { name: "乐程官方招新群二维码" })).toHaveAttribute(
+    "loading",
+    "lazy",
+  );
+  expect(screen.getByRole("img", { name: "乐程官方招新群二维码" })).toHaveAttribute(
+    "decoding",
+    "async",
+  );
 });

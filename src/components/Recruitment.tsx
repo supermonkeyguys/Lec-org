@@ -39,6 +39,8 @@ export default function Recruitment() {
           <img
             src={recruitmentInfo.qrImage}
             alt="乐程官方招新群二维码"
+            loading="lazy"
+            decoding="async"
             className="mx-auto aspect-square w-full max-w-72 object-contain"
           />
           <figcaption className="mt-4 text-base text-muted">
