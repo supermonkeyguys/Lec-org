@@ -7,6 +7,13 @@ const globalStyles = readFileSync(
   "utf8"
 );
 
+function mediaRule(query: string) {
+  const start = globalStyles.indexOf(`@media (${query})`);
+  const end = globalStyles.indexOf("\n}", start);
+
+  return globalStyles.slice(start, end + 2);
+}
+
 it("reserves the shared navigation offset at the start of every site section", () => {
   const siteSectionRule = globalStyles.match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
 
@@ -22,6 +29,19 @@ it("does not mandate snap scrolling for the base site rules", () => {
 
   expect(siteScrollRule).not.toContain("scroll-snap");
   expect(siteSectionRule).not.toContain("scroll-snap");
+});
+
+it("keeps sections content-sized on small and reduced-motion screens without snap rules", () => {
+  const mobileRule = mediaRule("max-width: 767px");
+  const reducedMotionRule = mediaRule("prefers-reduced-motion: reduce");
+
+  for (const rule of [mobileRule, reducedMotionRule]) {
+    const siteSectionRule = rule.match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
+
+    expect(siteSectionRule).toBeDefined();
+    expect(siteSectionRule).toContain("min-height: auto;");
+    expect(siteSectionRule).not.toContain("scroll-snap");
+  }
 });
 
 it("disables native smooth scrolling and floating animation for reduced motion", () => {

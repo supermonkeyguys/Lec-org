@@ -67,9 +67,19 @@ body {
   outline-offset: 3px;
 }
 
+@media (max-width: 767px) {
+  .site-section {
+    min-height: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .site-section {
+    min-height: auto;
   }
 
   .animate-float {

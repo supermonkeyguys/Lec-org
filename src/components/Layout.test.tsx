@@ -107,12 +107,20 @@ afterEach(() => {
 describe("native section scrolling", () => {
   it("leaves desktop wheel and paging-key scrolling native", () => {
     const { root, scrollTo } = renderLayout();
+
+    fireEvent.click(screen.getByRole("link", { name: "宗旨" }));
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: 1000, behavior: "smooth" });
+    scrollTo.mockClear();
+
     const wheel = createEvent.wheel(root, { deltaY: 120 });
     const pageDown = createEvent.keyDown(root, { key: "PageDown" });
+    const pageUp = createEvent.keyDown(root, { key: "PageUp" });
     fireEvent(root, wheel);
     fireEvent(root, pageDown);
+    fireEvent(root, pageUp);
     expect(wheel.defaultPrevented).toBe(false);
     expect(pageDown.defaultPrevented).toBe(false);
+    expect(pageUp.defaultPrevented).toBe(false);
     expect(scrollTo).not.toHaveBeenCalled();
   });
 });
@@ -128,11 +136,14 @@ describe("reduced motion", () => {
 
     const wheel = createEvent.wheel(root, { deltaY: 120 });
     const pageDown = createEvent.keyDown(root, { key: "PageDown" });
+    const pageUp = createEvent.keyDown(root, { key: "PageUp" });
     fireEvent(root, wheel);
     fireEvent(root, pageDown);
+    fireEvent(root, pageUp);
 
     expect(wheel.defaultPrevented).toBe(false);
     expect(pageDown.defaultPrevented).toBe(false);
+    expect(pageUp.defaultPrevented).toBe(false);
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
@@ -150,11 +161,14 @@ it("leaves wheel and paging keys native on small screens", () => {
   const { root, scrollTo } = renderLayout();
   const wheel = createEvent.wheel(root, { deltaY: 120 });
   const pageDown = createEvent.keyDown(root, { key: "PageDown" });
+  const pageUp = createEvent.keyDown(root, { key: "PageUp" });
 
   fireEvent(root, wheel);
   fireEvent(root, pageDown);
+  fireEvent(root, pageUp);
 
   expect(wheel.defaultPrevented).toBe(false);
   expect(pageDown.defaultPrevented).toBe(false);
+  expect(pageUp.defaultPrevented).toBe(false);
   expect(scrollTo).not.toHaveBeenCalled();
 });
