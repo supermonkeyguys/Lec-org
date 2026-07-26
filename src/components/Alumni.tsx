@@ -64,13 +64,17 @@ export default function Alumni() {
                         <div>
                           <div className="mb-2 flex flex-wrap items-center gap-2">
                             <h4 className="text-lg font-bold text-ink">{member.name}</h4>
-                            <span
-                              className={`rounded-full px-2 py-0.5 font-mono text-xs ${outcomeClassNames[member.outcome]}`}
-                            >
-                              {outcomeLabels[member.outcome]}
-                            </span>
+                            {member.outcome && (
+                              <span
+                                className={`rounded-full px-2 py-0.5 font-mono text-xs ${outcomeClassNames[member.outcome]}`}
+                              >
+                                {outcomeLabels[member.outcome]}
+                              </span>
+                            )}
                           </div>
-                          <p className="text-muted">{member.organization}</p>
+                          {member.organization && (
+                            <p className="text-muted">{member.organization}</p>
+                          )}
                           {member.detail && (
                             <p className="mt-1 text-sm text-fade">{member.detail}</p>
                           )}

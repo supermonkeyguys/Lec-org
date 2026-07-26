@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 import { members } from "./members";
 
 describe("ordinary member data", () => {
-  it("contains about thirty current members and no alumni outcome records", () => {
-    expect(members).toHaveLength(30);
-    expect(members.every((member) => member.status === "current")).toBe(true);
-    expect(members.every((member) => !("outcome" in member))).toBe(true);
+  it("matches the imported current-member workbook records", () => {
+    expect(members).toHaveLength(23);
+    expect(new Set(members.map((member) => member.cohort))).toEqual(
+      new Set([2024, 2025]),
+    );
   });
 });

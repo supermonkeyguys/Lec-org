@@ -1,14 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { alumniMembers, outcomeLabels } from "./alumni";
+import { alumniMembers } from "./alumni";
 
-describe("alumni member mock data", () => {
-  it("contains the three required outcomes and groups sorted newest first", () => {
-    expect(new Set(alumniMembers.map((member) => member.outcome))).toEqual(
-      new Set(["recommendation", "graduate-exam", "employment"]),
+describe("alumni member data", () => {
+  it("matches the imported alumni workbook records", () => {
+    expect(alumniMembers).toHaveLength(65);
+    expect(new Set(alumniMembers.map((member) => member.cohort))).toEqual(
+      new Set([2019, 2020, 2021, 2022, 2023]),
     );
-    expect(alumniMembers.map((member) => member.cohort)).toEqual(
-      [...alumniMembers.map((member) => member.cohort)].sort((a, b) => b - a),
-    );
-    expect(outcomeLabels.recommendation).toBe("保研");
+    expect(alumniMembers.some((member) => member.name === "刘洪堃")).toBe(true);
+    expect(alumniMembers.some((member) => member.name.includes("Mock"))).toBe(false);
   });
 });

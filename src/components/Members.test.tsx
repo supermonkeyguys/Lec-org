@@ -16,7 +16,7 @@ vi.mock("framer-motion", () => ({
   ),
 }));
 
-it("shows only current cohorts and keeps cohort filtering usable", () => {
+it("shows imported current cohorts and keeps cohort filtering usable", () => {
   render(<Members />);
 
   expect(screen.getByRole("heading", { name: membersContent.title })).toBeInTheDocument();
@@ -24,6 +24,6 @@ it("shows only current cohorts and keeps cohort filtering usable", () => {
   expect(screen.queryByText("Alumni")).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: "2024 级" }));
-  expect(screen.getByText("2024级成员 1")).toBeVisible();
-  expect(screen.queryByText("2025级成员 1")).not.toBeInTheDocument();
+  expect(screen.getByText("gyf")).toBeVisible();
+  expect(screen.queryByText(/Mock 展示/)).not.toBeInTheDocument();
 });
