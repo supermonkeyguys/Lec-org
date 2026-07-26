@@ -134,6 +134,20 @@ describe("member workbook normalization", () => {
     ])).toThrow(/direction/i);
   });
 
+  it("rejects a numeric zero direction instead of treating it as blank", () => {
+    const rowsWithZeroDirection = validRows.map((row) => [...row]);
+    rowsWithZeroDirection[0][1] = 0;
+
+    expect(() => validateWorkbook([expectedHeaders, ...rowsWithZeroDirection])).toThrow(/direction/i);
+  });
+
+  it("rejects a numeric zero grade instead of inheriting the preceding cohort", () => {
+    const rowsWithZeroGrade = validRows.map((row) => [...row]);
+    rowsWithZeroGrade.at(-1)![0] = 0;
+
+    expect(() => validateWorkbook([expectedHeaders, ...rowsWithZeroGrade])).toThrow(/cohort/i);
+  });
+
   it("rejects malformed headers before changing generated output", async () => {
     const directory = await mkdtemp(join(tmpdir(), "member-import-"));
     const inputPath = await createWorkbook(directory, [
@@ -159,6 +173,19 @@ describe("member workbook normalization", () => {
     await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
   });
 
+  it("rejects missing names before changing generated output", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithMissingName = validRows.map((row) => [...row]);
+    rowsWithMissingName[0][3] = "";
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithMissingName]);
+    const outputPath = join(directory, "member-records.generated.ts");
+    const originalOutput = "export const preserved = true;\n";
+    await writeFile(outputPath, originalOutput);
+
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/name/i);
+    await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
+  });
+
   it("writes the 23/65 partitions into one generated records module", async () => {
     const directory = await mkdtemp(join(tmpdir(), "member-import-"));
     const inputPath = await createWorkbook(directory, [expectedHeaders, ...validRows]);
@@ -168,7 +195,10 @@ describe("member workbook normalization", () => {
       currentMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2024 })]),
       alumniMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2019 })]),
     });
-    await expect(readFile(outputPath, "utf8")).resolves.toContain("export const generatedMembers");
-    await expect(readFile(outputPath, "utf8")).resolves.toContain("export const generatedAlumniMembers");
+    const generatedOutput = await readFile(outputPath, "utf8");
+    expect(generatedOutput).toContain("export const generatedMembers");
+    expect(generatedOutput).toContain("export const generatedAlumniMembers");
+    expect(generatedOutput.match(/id: "member-/g)).toHaveLength(23);
+    expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(65);
   });
 });

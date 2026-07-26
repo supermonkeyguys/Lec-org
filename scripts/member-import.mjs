@@ -6,6 +6,7 @@ import XLSX from "xlsx";
 const expectedHeaders = ["年级", "方向", "专业", "姓名", "毕业去向"];
 const allowedDirections = new Set(["保研", "考研", "深造", "就业", "考公"]);
 const generatedRecordsPath = resolve(process.cwd(), "src/data/member-records.generated.ts");
+const cellText = (value) => String(value ?? "").trim();
 
 export function mapOutcome(direction) {
   return {
@@ -26,23 +27,25 @@ export function normaliseRows(rows, merges = []) {
   let direction = "";
 
   return rows.flatMap(([nextGrade, nextDirection, major, name, destination], rowIndex) => {
-    if (nextGrade) {
-      grade = String(nextGrade).trim();
+    const nextGradeText = cellText(nextGrade);
+    const nextDirectionText = cellText(nextDirection);
+    if (nextGradeText) {
+      grade = nextGradeText;
       direction = "";
     }
-    if (nextDirection) direction = String(nextDirection).trim();
+    if (nextDirectionText) direction = nextDirectionText;
     else if (!isMergedContinuation(merges, rowIndex + 1, 1)) direction = "";
 
     const cohort = Number.parseInt(grade, 10);
-    const memberName = String(name ?? "").trim();
+    const memberName = cellText(name);
     if (!Number.isInteger(cohort) || !memberName) return [];
 
     return [{
       cohort: 2000 + cohort,
       direction,
-      major: String(major ?? "").trim(),
+      major: cellText(major),
       name: memberName,
-      destination: String(destination ?? "").trim(),
+      destination: cellText(destination),
     }];
   });
 }
@@ -100,18 +103,20 @@ ${renderAlumni(records.alumniMembers)}
 `;
 }
 
-const isEmptyRow = (row) => row.every((value) => String(value ?? "").trim() === "");
+const isEmptyRow = (row) => row.every((value) => cellText(value) === "");
 
 function validateSourceRows(rows, merges) {
   let grade = "";
   let direction = "";
 
   rows.forEach(([nextGrade, nextDirection, major, name, destination], rowIndex) => {
-    if (nextGrade) {
-      grade = String(nextGrade).trim();
+    const nextGradeText = cellText(nextGrade);
+    const nextDirectionText = cellText(nextDirection);
+    if (nextGradeText) {
+      grade = nextGradeText;
       direction = "";
     }
-    if (nextDirection) direction = String(nextDirection).trim();
+    if (nextDirectionText) direction = nextDirectionText;
     else if (!isMergedContinuation(merges, rowIndex + 1, 1)) direction = "";
 
     const row = [nextGrade, nextDirection, major, name, destination];
@@ -123,7 +128,7 @@ function validateSourceRows(rows, merges) {
     if (!Number.isInteger(cohort)) {
       throw new Error(`Invalid cohort at Sheet1 row ${rowIndex + 2}`);
     }
-    if (!String(name ?? "").trim()) {
+    if (!cellText(name)) {
       throw new Error(`Member name is required at Sheet1 row ${rowIndex + 2}`);
     }
     if (direction && !allowedDirections.has(direction)) {
