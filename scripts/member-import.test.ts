@@ -214,6 +214,24 @@ describe("member workbook normalization", () => {
     expect(() => validateWorkbook([expectedHeaders, ...rowsWithZeroGrade])).toThrow(/cohort/i);
   });
 
+  it("accepts exact numeric cohort cells from the source workbook", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithNumericCohorts: unknown[][] = validRows.map((row) => [...row]);
+    rowsWithNumericCohorts[0][0] = 19;
+    rowsWithNumericCohorts[65][0] = 24;
+    rowsWithNumericCohorts[77][0] = 25;
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithNumericCohorts]);
+    const outputPath = join(directory, "member-records.generated.ts");
+
+    await expect(importMembers(inputPath, outputPath)).resolves.toMatchObject({
+      currentMembers: expect.arrayContaining([
+        expect.objectContaining({ cohort: 2024 }),
+        expect.objectContaining({ cohort: 2025 }),
+      ]),
+      alumniMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2019 })]),
+    });
+  });
+
   it("rejects malformed headers before changing generated output", async () => {
     const directory = await mkdtemp(join(tmpdir(), "member-import-"));
     const inputPath = await createWorkbook(directory, [
@@ -268,6 +286,49 @@ describe("member workbook normalization", () => {
     await writeFile(outputPath, originalOutput);
 
     await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/name/i);
+    await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
+  });
+
+  it.each([
+    ["number", "major", 2, 123],
+    ["boolean", "major", 2, true],
+    ["formula", "major", 2, { formula: "\"公式专业\"", result: "公式专业" }],
+    ["rich text", "major", 2, { richText: [{ text: "富文本专业" }] }],
+    ["date", "major", 2, new Date("2026-07-26T00:00:00.000Z")],
+    ["number", "destination", 4, 123],
+    ["boolean", "destination", 4, true],
+    ["formula", "destination", 4, { formula: "\"公式去向\"", result: "公式去向" }],
+    ["rich text", "destination", 4, { richText: [{ text: "富文本去向" }] }],
+    ["date", "destination", 4, new Date("2026-07-26T00:00:00.000Z")],
+  ])("rejects a %s %s cell before changing generated output", async (_label, field, columnIndex, invalidValue) => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithInvalidOptionalText: unknown[][] = validRows.map((row) => [...row]);
+    rowsWithInvalidOptionalText[0][columnIndex] = invalidValue;
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithInvalidOptionalText]);
+    const outputPath = join(directory, "member-records.generated.ts");
+    const originalOutput = "export const preserved = true;\n";
+    await writeFile(outputPath, originalOutput);
+
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(new RegExp(field, "i"));
+    await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
+  });
+
+  it.each([
+    ["number", 123],
+    ["boolean", true],
+    ["formula", { formula: "\"公式方向\"", result: "公式方向" }],
+    ["rich text", { richText: [{ text: "富文本方向" }] }],
+    ["date", new Date("2026-07-26T00:00:00.000Z")],
+  ])("rejects a %s direction cell before changing generated output", async (_label, invalidDirection) => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithInvalidDirection: unknown[][] = validRows.map((row) => [...row]);
+    rowsWithInvalidDirection[0][1] = invalidDirection;
+    const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithInvalidDirection]);
+    const outputPath = join(directory, "member-records.generated.ts");
+    const originalOutput = "export const preserved = true;\n";
+    await writeFile(outputPath, originalOutput);
+
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/Invalid direction/i);
     await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
   });
 

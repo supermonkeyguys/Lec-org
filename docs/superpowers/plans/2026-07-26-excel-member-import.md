@@ -4,9 +4,9 @@
 
 **Goal:** Replace mock member cards with the named records in LEC近三年人员信息 (1).xlsx.
 
-**Architecture:** A development-only Node importer reads Sheet1, forward-fills merged cells, and emits the existing TypeScript data modules. The website continues to read static TypeScript data, with optional Excel fields rendered conditionally.
+**Architecture:** A development-only Node importer uses ExcelJS to read Sheet1, forward-fill only verified merged cells, validate raw schema values, and atomically emit `src/data/member-records.generated.ts`. The public member and alumni data modules continue to expose static TypeScript data and optional Excel fields render conditionally.
 
-**Tech Stack:** Next.js 16 Pages Router, React 19, TypeScript, Vitest, Tailwind CSS, xlsx.
+**Tech Stack:** Next.js 16 Pages Router, React 19, TypeScript, Vitest, Tailwind CSS, ExcelJS.
 
 ## Global Constraints
 
@@ -19,9 +19,10 @@
 
 ## File Structure
 
-- scripts/member-import.mjs: normalizes workbook rows and writes deterministic data modules.
+- scripts/member-import.mjs: uses ExcelJS to normalize and validate workbook rows, then atomically writes the deterministic generated records module.
 - scripts/member-import.test.ts: tests row normalization and partitioning.
-- src/data/members.ts, src/data/alumni.ts: generated records and non-mock content copy.
+- src/data/member-records.generated.ts: generated current-member and alumni record arrays.
+- src/data/members.ts, src/data/alumni.ts: public types, non-mock content copy, and re-exports of generated records.
 - src/components/Members.tsx, src/components/Alumni.tsx: safe rendering of optional real-data fields.
 - Existing matching *.test.* files: real-record regressions.
 
@@ -106,11 +107,10 @@ git commit -m "feat: normalize member Excel records"
 - Modify: package.json
 - Modify: package-lock.json
 - Modify: scripts/member-import.mjs
-- Modify: src/data/members.ts
-- Modify: src/data/alumni.ts
+- Modify: src/data/member-records.generated.ts
 
 **Interfaces:**
-- npm run import:members -- "/absolute/path/to/file.xlsx" reads the workbook and writes exactly the two data modules.
+- npm run import:members -- "/absolute/path/to/file.xlsx" reads the workbook and writes exactly one generated records module.
 - A generated member has { id, name, cohort, role, status: "current", avatar, bio? }.
 - A generated alumnus has { id, name, cohort, outcome?, organization?, detail? }.
 
@@ -119,24 +119,25 @@ git commit -m "feat: normalize member Excel records"
 ~~~json
 {
   "scripts": { "import:members": "node scripts/member-import.mjs" },
-  "devDependencies": { "xlsx": "^0.18.5" }
+  "devDependencies": { "exceljs": "4.4.0" }
 }
 ~~~
 
 Run: npm install --package-lock-only
 
-Expected: package lock gains xlsx; production dependencies remain unchanged.
+Expected: package lock gains ExcelJS; production dependencies remain unchanged.
 
 - [ ] **Step 2: Implement the workbook boundary and writers**
 
 ~~~js
-const workbook = XLSX.readFile(inputPath, { cellDates: false });
-const sheet = workbook.Sheets.Sheet1;
+const workbook = new ExcelJS.Workbook();
+await workbook.xlsx.readFile(inputPath);
+const sheet = workbook.getWorksheet("Sheet1");
 if (!sheet) throw new Error("Workbook must contain Sheet1");
-const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" }).slice(1);
-const records = partitionRecords(normaliseRows(rows));
-await writeFile(new URL("../src/data/members.ts", import.meta.url), renderMembers(records.currentMembers));
-await writeFile(new URL("../src/data/alumni.ts", import.meta.url), renderAlumni(records.alumniMembers));
+const rows = worksheetRows(sheet);
+const merges = sheet.model.merges.map(parseMergeRange);
+const records = validateWorkbook(rows, merges);
+await writeAtomically(generatedRecordsPath, renderGeneratedRecords(records));
 ~~~
 
 Use source-order IDs. Set role to the cohort display label, bio to a non-empty major, and a DiceBear avatar URL derived from the name. Only emit outcome, organization, and detail when their source cells contain text. Make rendered files retain their interfaces, label constants, and non-mock copy.
@@ -150,7 +151,7 @@ Expected: Imported 23 current members and 65 alumni members; the Excel source ti
 - [ ] **Step 4: Commit Task 2**
 
 ~~~bash
-git add package.json package-lock.json scripts/member-import.mjs src/data/members.ts src/data/alumni.ts
+git add package.json package-lock.json scripts/member-import.mjs src/data/member-records.generated.ts
 git commit -m "feat: import LEC member records"
 ~~~
 

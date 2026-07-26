@@ -22,7 +22,7 @@
 
 ## 架构
 
-Excel 只作为一次性来源文件；官网运行时继续读取版本控制中的 TypeScript 数据模块。新增一个可重复执行的导入脚本：读取工作簿、规范化字段、输出 `src/data/members.ts` 与 `src/data/alumni.ts` 的数据数组。脚本不上传、保存或修改原始 Excel。
+Excel 只作为一次性来源文件；官网运行时继续读取版本控制中的 TypeScript 数据模块。可重复执行的导入脚本使用 ExcelJS 读取工作簿、规范化并校验原始单元格值，原子地输出唯一的 `src/data/member-records.generated.ts` 记录模块；`members.ts` 与 `alumni.ts` 仅保留公开类型、展示文案和对该模块的转出。脚本不上传、保存或修改原始 Excel。
 
 ## 验收标准
 

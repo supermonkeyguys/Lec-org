@@ -19,8 +19,18 @@ const validatedContextText = (value, field, sourceRow) => {
 };
 const gradePattern = /^(19|20|21|22|23|24|25)(?:级)?$/;
 const parseSourceCohort = (grade) => {
+  if (typeof grade === "number") {
+    return Number.isInteger(grade) && grade >= 19 && grade <= 25 ? grade : Number.NaN;
+  }
+  if (typeof grade !== "string") return Number.NaN;
   const match = grade.match(gradePattern);
   return match ? Number.parseInt(match[1], 10) : Number.NaN;
+};
+const validatedCohort = (value, sourceRow) => {
+  if (isBlankCell(value)) return "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" && Number.isInteger(value) && value >= 19 && value <= 25) return value;
+  throw new Error(`Invalid cohort at Sheet1 row ${sourceRow}`);
 };
 
 export function mapOutcome(direction) {
@@ -42,9 +52,9 @@ export function normaliseRows(rows, merges = []) {
   let direction = "";
 
   return rows.flatMap(([nextGrade, nextDirection, major, name, destination], rowIndex) => {
-    const nextGradeText = optionalText(nextGrade);
+    const nextGradeText = typeof nextGrade === "string" ? nextGrade.trim() : nextGrade;
     const nextDirectionText = optionalText(nextDirection);
-    if (nextGradeText) {
+    if (!isBlankCell(nextGrade)) {
       grade = nextGradeText;
       direction = "";
     }
@@ -126,8 +136,10 @@ function validateSourceRows(rows, merges) {
 
   rows.forEach(([nextGrade, nextDirection, major, name, destination], rowIndex) => {
     const sourceRow = rowIndex + 2;
-    const nextGradeText = validatedContextText(nextGrade, "cohort", sourceRow);
+    const nextGradeText = validatedCohort(nextGrade, sourceRow);
     const nextDirectionText = validatedContextText(nextDirection, "direction", sourceRow);
+    validatedContextText(major, "major", sourceRow);
+    validatedContextText(destination, "destination", sourceRow);
     if (nextGradeText) {
       grade = nextGradeText;
       direction = "";
@@ -216,20 +228,14 @@ const parseMergeRange = (range) => {
   return { s: parseCellAddress(start), e: parseCellAddress(end) };
 };
 
-const extractedCellValue = (cell, rowIndex, columnIndex) => {
-  if (rowIndex === 0 || columnIndex === 3) return cell.value;
-  if (columnIndex === 2 || columnIndex === 4) return cell.text.trim();
-  if (isBlankCell(cell.value)) return "";
-  if (["string", "number", "boolean"].includes(typeof cell.value)) return cell.text.trim();
-  return cell.value;
-};
+const extractedCellValue = (cell) => cell.value;
 
 const worksheetRows = (sheet) => Array.from(
   { length: sheet.rowCount },
   (_, rowIndex) => Array.from({ length: sheet.columnCount }, (_, columnIndex) => {
     const cell = sheet.getCell(rowIndex + 1, columnIndex + 1);
     if (cell.isMerged && cell.master.address !== cell.address) return undefined;
-    return extractedCellValue(cell, rowIndex, columnIndex);
+    return extractedCellValue(cell);
   }),
 );
 
