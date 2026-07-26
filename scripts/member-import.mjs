@@ -7,6 +7,11 @@ const expectedHeaders = ["年级", "方向", "专业", "姓名", "毕业去向"]
 const allowedDirections = new Set(["保研", "考研", "深造", "就业", "考公"]);
 const generatedRecordsPath = resolve(process.cwd(), "src/data/member-records.generated.ts");
 const cellText = (value) => String(value ?? "").trim();
+const gradePattern = /^(19|20|21|22|23|24|25)(?:级)?$/;
+const parseSourceCohort = (grade) => {
+  const match = grade.match(gradePattern);
+  return match ? Number.parseInt(match[1], 10) : Number.NaN;
+};
 
 export function mapOutcome(direction) {
   return {
@@ -36,7 +41,7 @@ export function normaliseRows(rows, merges = []) {
     if (nextDirectionText) direction = nextDirectionText;
     else if (!isMergedContinuation(merges, rowIndex + 1, 1)) direction = "";
 
-    const cohort = Number.parseInt(grade, 10);
+    const cohort = parseSourceCohort(grade);
     const memberName = cellText(name);
     if (!Number.isInteger(cohort) || !memberName) return [];
 
@@ -124,7 +129,7 @@ function validateSourceRows(rows, merges) {
       return;
     }
 
-    const cohort = Number.parseInt(grade, 10);
+    const cohort = parseSourceCohort(grade);
     if (!Number.isInteger(cohort)) {
       throw new Error(`Invalid cohort at Sheet1 row ${rowIndex + 2}`);
     }

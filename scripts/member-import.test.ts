@@ -186,6 +186,22 @@ describe("member workbook normalization", () => {
     await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
   });
 
+  it.each(["19garbage", "19.5"])(
+    "rejects malformed grade %s before changing generated output",
+    async (malformedGrade) => {
+      const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+      const rowsWithMalformedGrade = validRows.map((row) => [...row]);
+      rowsWithMalformedGrade[0][0] = malformedGrade;
+      const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithMalformedGrade]);
+      const outputPath = join(directory, "member-records.generated.ts");
+      const originalOutput = "export const preserved = true;\n";
+      await writeFile(outputPath, originalOutput);
+
+      await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/cohort/i);
+      await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
+    },
+  );
+
   it("writes the 23/65 partitions into one generated records module", async () => {
     const directory = await mkdtemp(join(tmpdir(), "member-import-"));
     const inputPath = await createWorkbook(directory, [expectedHeaders, ...validRows]);
