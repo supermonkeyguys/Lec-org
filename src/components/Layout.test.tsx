@@ -59,6 +59,7 @@ function renderLayout() {
       <section id="members">Members</section>
       <section id="alumni">Alumni</section>
       <section id="history">History</section>
+      <section id="recruitment">Recruitment</section>
     </Layout>,
   );
 
@@ -69,6 +70,7 @@ function renderLayout() {
     members: 2000,
     alumni: 3000,
     history: 4000,
+    recruitment: 5000,
   };
 
   Object.entries(offsets).forEach(([id, offsetTop]) => {
@@ -121,7 +123,7 @@ describe("scoped section navigation", () => {
 
   it.each([
     ["PageDown", 1000],
-    ["End", 4000],
+    ["End", 5000],
     ["Home", 0],
   ])("handles %s inside the scroll root", (key, expectedTop) => {
     const { root, scrollTo } = renderLayout();
@@ -193,6 +195,52 @@ describe("scoped section navigation", () => {
     expect(event.defaultPrevented).toBe(false);
     expect(scrollTo).not.toHaveBeenCalled();
   });
+
+  it("preserves upward root scrolling inside an oversized direct-child section", () => {
+    const { root, scrollTo } = renderLayout();
+    const alumni = document.getElementById("alumni")!;
+    Object.defineProperties(root, {
+      clientHeight: { configurable: true, value: 1000 },
+      scrollHeight: { configurable: true, value: 5200 },
+    });
+    Object.defineProperties(alumni, {
+      clientHeight: { configurable: true, value: 2200 },
+      offsetHeight: { configurable: true, value: 2200 },
+    });
+    root.scrollTop = 4000;
+
+    const event = createEvent.wheel(alumni, { deltaY: -120 });
+    fireEvent(alumni, event);
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["lower", 4200, 120, 5000],
+    ["upper", 3000, -120, 2000],
+  ])(
+    "hands wheel navigation to the adjacent section at the oversized section's %s edge",
+    (_edge, scrollTop, deltaY, expectedTop) => {
+      const { root, scrollTo } = renderLayout();
+      const alumni = document.getElementById("alumni")!;
+      Object.defineProperties(root, {
+        clientHeight: { configurable: true, value: 1000 },
+        scrollHeight: { configurable: true, value: 5200 },
+      });
+      Object.defineProperties(alumni, {
+        clientHeight: { configurable: true, value: 2200 },
+        offsetHeight: { configurable: true, value: 2200 },
+      });
+      root.scrollTop = scrollTop;
+
+      const event = createEvent.wheel(alumni, { deltaY });
+      fireEvent(alumni, event);
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(scrollTo).toHaveBeenLastCalledWith({ top: expectedTop, behavior: "smooth" });
+    },
+  );
 });
 
 describe("reduced motion", () => {
