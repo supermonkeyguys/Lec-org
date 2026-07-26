@@ -47,6 +47,38 @@ describe("member workbook normalization", () => {
     ]);
   });
 
+  it("only carries a direction into rows covered by its source merge", () => {
+    const rows = [
+      ["22级", "就业", "软工", "有标签", "公司"],
+      [undefined, undefined, "软工", "合并单元格", "公司"],
+      [undefined, undefined, "软工", "真实空白", ""],
+    ] as const;
+
+    expect(normaliseRows(rows, [{ s: { r: 1, c: 1 }, e: { r: 2, c: 1 } }])).toEqual([
+      {
+        cohort: 2022,
+        direction: "就业",
+        major: "软工",
+        name: "有标签",
+        destination: "公司",
+      },
+      {
+        cohort: 2022,
+        direction: "就业",
+        major: "软工",
+        name: "合并单元格",
+        destination: "公司",
+      },
+      {
+        cohort: 2022,
+        direction: "",
+        major: "软工",
+        name: "真实空白",
+        destination: "",
+      },
+    ]);
+  });
+
   it("maps source directions to alumni outcomes", () => {
     expect(mapOutcome("深造")).toBe("graduate-exam");
     expect(mapOutcome("考公")).toBe("employment");

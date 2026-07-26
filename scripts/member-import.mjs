@@ -13,16 +13,21 @@ export function mapOutcome(direction) {
   }[direction.trim()];
 }
 
-export function normaliseRows(rows) {
+const isMergedContinuation = (merges, sourceRow, column) => merges.some(({ s, e }) => (
+  s.c <= column && e.c >= column && s.r < sourceRow && sourceRow <= e.r
+));
+
+export function normaliseRows(rows, merges = []) {
   let grade = "";
   let direction = "";
 
-  return rows.flatMap(([nextGrade, nextDirection, major, name, destination]) => {
+  return rows.flatMap(([nextGrade, nextDirection, major, name, destination], rowIndex) => {
     if (nextGrade) {
       grade = String(nextGrade).trim();
       direction = "";
     }
     if (nextDirection) direction = String(nextDirection).trim();
+    else if (!isMergedContinuation(merges, rowIndex + 1, 1)) direction = "";
 
     const cohort = Number.parseInt(grade, 10);
     const memberName = String(name ?? "").trim();
@@ -139,7 +144,7 @@ export async function importMembers(inputPath) {
   if (!sheet) throw new Error("Workbook must contain Sheet1");
 
   const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" }).slice(1);
-  const records = partitionRecords(normaliseRows(rows));
+  const records = partitionRecords(normaliseRows(rows, sheet["!merges"] ?? []));
 
   await writeFile(new URL("../src/data/members.ts", import.meta.url), renderMembers(records.currentMembers));
   await writeFile(new URL("../src/data/alumni.ts", import.meta.url), renderAlumni(records.alumniMembers));
