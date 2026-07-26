@@ -1,42 +1,76 @@
-export interface Value {
-  title: string;
+export interface TeamFact {
+  label: string;
+  value: string;
   description: string;
+}
+
+export interface TeamAboutImage {
+  src: string;
+  alt: string;
 }
 
 export interface TeamInfo {
   name: string;
   nameEn: string;
-  founded: number;
+  founded: { year: number; month: number };
+  memberCount: { value: number; approximate: boolean };
+  weeklyAttendanceHours: number;
   mission: string;
-  values: Value[];
+  facts: TeamFact[];
+  aboutImages: TeamAboutImage[];
+  content: {
+    heroMeta: string;
+    heroCta: string;
+    missionEyebrow: string;
+    missionTitle: string;
+    missionSubtitle: string;
+    footerTagline: string;
+  };
 }
 
 export const teamInfo: TeamInfo = {
   name: "LEC 实验室",
   nameEn: "LEC Lab",
-  founded: 2014,
-  mission:
-    "探索计算机科学的边界，培养热爱技术、敢于实践的工程师。我们相信最好的学习方式是动手创造，在解决真实问题的过程中成长。",
-  values: [
+  founded: { year: 2010, month: 6 },
+  memberCount: { value: 30, approximate: true },
+  weeklyAttendanceHours: 28,
+  mission: "学以致用，服务学校，走向社会",
+  facts: [
     {
-      title: "实践驱动",
-      description:
-        "不以理论为终点，以能跑通的代码、能上线的产品作为学习的闭环。",
+      label: "团队规模",
+      value: "约 30 人",
+      description: "由在读成员共同参与团队学习与建设。",
     },
     {
-      title: "开放协作",
-      description:
-        "知识在传递中增值。每周技术分享、代码 review 互评、学长带学弟。",
+      label: "每周考勤",
+      value: "28 小时",
+      description: "以稳定投入保障学习与实践进度。",
     },
     {
-      title: "长期主义",
-      description:
-        "不追逐速成技巧，关注计算机科学的本质与工程能力的内化。",
+      label: "日常活动",
+      value: "例会 / 学习交流",
+      description: "通过固定交流保持信息同步与知识共享。",
     },
     {
-      title: "传承精神",
-      description:
-        "每一届既是学习者也是传承者。10 年积累，一届一届的文档、代码和经验沉淀下来。",
+      label: "实践方向",
+      value: "竞赛 / 项目实践",
+      description: "把所学知识用于竞赛准备和项目实践。",
     },
   ],
+  aboutImages: [
+    { src: "/about/lec-about-01.webp", alt: "团队成员围坐火锅聚餐" },
+    { src: "/about/lec-about-02.webp", alt: "团队成员乘坐商场扶梯" },
+    { src: "/about/lec-about-03.webp", alt: "夜间树下的团队成员与小狗合影" },
+    { src: "/about/lec-about-04.webp", alt: "身穿学士服的团队成员在校园合影" },
+    { src: "/about/lec-about-05.webp", alt: "成员在橙白热气球装置前集体合影" },
+    { src: "/about/lec-about-06.webp", alt: "户外树下手持风车与礼物的团队成员合影" },
+  ],
+  content: {
+    heroMeta: "2010 年 6 月成立",
+    heroCta: "认识我们的成员 →",
+    missionEyebrow: "Team Profile",
+    missionTitle: "团队宗旨与日常",
+    missionSubtitle: "团队介绍临时依据，正式资料到位后从数据文件统一替换。",
+    footerTagline: "Built by LEC members",
+  },
 };
