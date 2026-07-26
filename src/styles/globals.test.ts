@@ -16,6 +16,14 @@ it("reserves the shared navigation offset at the start of every site section", (
   );
 });
 
+it("does not mandate snap scrolling for the base site rules", () => {
+  const siteScrollRule = globalStyles.match(/\.site-scroll\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
+  const siteSectionRule = globalStyles.match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
+
+  expect(siteScrollRule).not.toContain("scroll-snap");
+  expect(siteSectionRule).not.toContain("scroll-snap");
+});
+
 it("disables native smooth scrolling and floating animation for reduced motion", () => {
   const reducedMotionRule = globalStyles.slice(
     globalStyles.indexOf("@media (prefers-reduced-motion: reduce)"),

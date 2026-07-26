@@ -104,143 +104,17 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe("scoped section navigation", () => {
-  it("moves one adjacent section per wheel gesture and throttles repeated input", () => {
+describe("native section scrolling", () => {
+  it("leaves desktop wheel and paging-key scrolling native", () => {
     const { root, scrollTo } = renderLayout();
-
-    const firstWheel = createEvent.wheel(root, { deltaY: 120 });
-    fireEvent(root, firstWheel);
-    fireEvent.wheel(root, { deltaY: 120 });
-
-    expect(firstWheel.defaultPrevented).toBe(true);
-    expect(scrollTo).toHaveBeenCalledTimes(1);
-    expect(scrollTo).toHaveBeenLastCalledWith({ top: 1000, behavior: "smooth" });
-
-    vi.advanceTimersByTime(800);
-    fireEvent.wheel(root, { deltaY: 120 });
-    expect(scrollTo).toHaveBeenLastCalledWith({ top: 2000, behavior: "smooth" });
-  });
-
-  it.each([
-    ["PageDown", 1000],
-    ["End", 6200],
-    ["Home", 0],
-  ])("handles %s inside the scroll root", (key, expectedTop) => {
-    const { root, scrollTo } = renderLayout();
-    root.scrollTop = key === "Home" ? 2000 : 0;
-
-    const event = createEvent.keyDown(root, { key });
-    fireEvent(root, event);
-
-    expect(event.defaultPrevented).toBe(true);
-    expect(scrollTo).toHaveBeenLastCalledWith({
-      top: expectedTop,
-      behavior: "smooth",
-    });
-  });
-
-  it("handles PageUp by moving to the previous adjacent section", () => {
-    const { root, scrollTo } = renderLayout();
-    root.scrollTop = 2000;
-
-    fireEvent.keyDown(root, { key: "PageUp" });
-
-    expect(scrollTo).toHaveBeenLastCalledWith({ top: 1000, behavior: "smooth" });
-  });
-
-  it("preserves native wheel behavior on interactive elements", () => {
-    const { scrollTo } = renderLayout();
-    const link = screen.getByRole("link", { name: "Interactive link" });
-    const event = createEvent.wheel(link, { deltaY: 120 });
-
-    fireEvent(link, event);
-
-    expect(event.defaultPrevented).toBe(false);
+    const wheel = createEvent.wheel(root, { deltaY: 120 });
+    const pageDown = createEvent.keyDown(root, { key: "PageDown" });
+    fireEvent(root, wheel);
+    fireEvent(root, pageDown);
+    expect(wheel.defaultPrevented).toBe(false);
+    expect(pageDown.defaultPrevented).toBe(false);
     expect(scrollTo).not.toHaveBeenCalled();
   });
-
-  it("preserves a nested scroll container while it can consume the gesture", () => {
-    const { scrollTo } = renderLayout();
-    const nested = screen.getByTestId("nested-scroll");
-    Object.defineProperties(nested, {
-      clientHeight: { configurable: true, value: 100 },
-      scrollHeight: { configurable: true, value: 300 },
-      scrollTop: { configurable: true, writable: true, value: 20 },
-    });
-    const target = screen.getByTestId("nested-target");
-    const event = createEvent.wheel(target, { deltaY: 120 });
-
-    fireEvent(target, event);
-
-    expect(event.defaultPrevented).toBe(false);
-    expect(scrollTo).not.toHaveBeenCalled();
-  });
-
-  it("preserves root scrolling inside an oversized direct-child section", () => {
-    const { root, scrollTo } = renderLayout();
-    const alumni = document.getElementById("alumni")!;
-    Object.defineProperties(root, {
-      clientHeight: { configurable: true, value: 1000 },
-      scrollHeight: { configurable: true, value: 7200 },
-    });
-    Object.defineProperties(alumni, {
-      clientHeight: { configurable: true, value: 2200 },
-      offsetHeight: { configurable: true, value: 2200 },
-    });
-    root.scrollTop = 3200;
-
-    const event = createEvent.wheel(alumni, { deltaY: 120 });
-    fireEvent(alumni, event);
-
-    expect(event.defaultPrevented).toBe(false);
-    expect(scrollTo).not.toHaveBeenCalled();
-  });
-
-  it("preserves upward root scrolling inside an oversized direct-child section", () => {
-    const { root, scrollTo } = renderLayout();
-    const alumni = document.getElementById("alumni")!;
-    Object.defineProperties(root, {
-      clientHeight: { configurable: true, value: 1000 },
-      scrollHeight: { configurable: true, value: 7200 },
-    });
-    Object.defineProperties(alumni, {
-      clientHeight: { configurable: true, value: 2200 },
-      offsetHeight: { configurable: true, value: 2200 },
-    });
-    root.scrollTop = 4000;
-
-    const event = createEvent.wheel(alumni, { deltaY: -120 });
-    fireEvent(alumni, event);
-
-    expect(event.defaultPrevented).toBe(false);
-    expect(scrollTo).not.toHaveBeenCalled();
-  });
-
-  it.each([
-    ["lower", 4200, 120, 5200],
-    ["upper", 3000, -120, 2000],
-  ])(
-    "hands wheel navigation to the adjacent section at the oversized section's %s edge",
-    (_edge, scrollTop, deltaY, expectedTop) => {
-      const { root, scrollTo } = renderLayout();
-      const alumni = document.getElementById("alumni")!;
-      Object.defineProperties(root, {
-        clientHeight: { configurable: true, value: 1000 },
-        scrollHeight: { configurable: true, value: 7200 },
-      });
-      Object.defineProperties(alumni, {
-        clientHeight: { configurable: true, value: 2200 },
-        offsetHeight: { configurable: true, value: 2200 },
-      });
-      root.scrollTop = scrollTop;
-
-      const event = createEvent.wheel(alumni, { deltaY });
-      fireEvent(alumni, event);
-
-      expect(event.defaultPrevented).toBe(true);
-      expect(scrollTo).toHaveBeenLastCalledWith({ top: expectedTop, behavior: "smooth" });
-    },
-  );
 });
 
 describe("reduced motion", () => {
