@@ -40,15 +40,12 @@ body {
 }
 
 .site-scroll {
-  scroll-snap-type: y mandatory;
   scroll-padding-block-start: var(--site-nav-safe-offset);
 }
 
 .site-section {
   min-height: 100svh;
   padding-block-start: var(--site-nav-safe-offset);
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .animate-float {
@@ -70,29 +67,9 @@ body {
   outline-offset: 3px;
 }
 
-@media (max-width: 767px) {
-  .site-scroll {
-    scroll-snap-type: none;
-  }
-
-  .site-section {
-    min-height: auto;
-    scroll-snap-stop: normal;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  .site-scroll {
-    scroll-snap-type: none;
-  }
-
-  .site-section {
-    min-height: auto;
-    scroll-snap-stop: normal;
   }
 
   .animate-float {
