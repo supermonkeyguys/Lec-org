@@ -5,6 +5,7 @@ import {
   sectionFade,
   usePrefersReducedMotion,
 } from "@/config/animations";
+import { assetPath } from "@/lib/assetPath";
 
 const emojis = ["👥", "🕒", "💬", "💻"];
 
@@ -35,7 +36,7 @@ export default function Mission() {
           {teamInfo.aboutImages.map((image) => (
             <img
               key={image.src}
-              src={image.src}
+              src={assetPath(image.src)}
               alt={image.alt}
               loading="lazy"
               decoding="async"

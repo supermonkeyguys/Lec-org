@@ -1,4 +1,5 @@
 import { recruitmentInfo } from "@/data/recruitment";
+import { assetPath } from "@/lib/assetPath";
 
 const recruitmentDetails = [
   { label: "招新时间", value: recruitmentInfo.period },
@@ -37,7 +38,7 @@ export default function Recruitment() {
 
         <figure className="sketchy-border mx-auto w-full max-w-sm bg-card p-5 text-center">
           <img
-            src={recruitmentInfo.qrImage}
+            src={assetPath(recruitmentInfo.qrImage)}
             alt="乐程官方招新群二维码"
             loading="lazy"
             decoding="async"
