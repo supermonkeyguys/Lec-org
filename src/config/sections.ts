@@ -9,8 +9,7 @@ export const sections: SectionItem[] = [
   { id: "mission", label: "宗旨", num: "02" },
   { id: "achievements", label: "成就", num: "03" },
   { id: "directions", label: "方向", num: "04" },
-  { id: "members", label: "成员", num: "05" },
-  { id: "alumni", label: "优秀成员", num: "06" },
-  { id: "history", label: "历史", num: "07" },
-  { id: "recruitment", label: "招新", num: "08" },
+  { id: "alumni", label: "优秀成员", num: "05" },
+  { id: "history", label: "历史", num: "06" },
+  { id: "recruitment", label: "招新", num: "07" },
 ];

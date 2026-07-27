@@ -39,7 +39,7 @@ export default function Hero() {
         </p>
 
         <motion.a
-          href="#members"
+          href="#alumni"
           className="inline-block mt-12 sketchy-border bg-card px-8 py-3 text-ink no-underline font-mono text-sm hover:-translate-y-0.5 transition-transform"
           whileHover={reducedMotion ? undefined : { y: -2 }}
           whileTap={reducedMotion ? undefined : { y: 0 }}

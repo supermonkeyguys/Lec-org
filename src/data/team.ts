@@ -67,7 +67,7 @@ export const teamInfo: TeamInfo = {
   ],
   content: {
     heroMeta: "2010 年 6 月成立",
-    heroCta: "认识我们的成员 →",
+    heroCta: "认识我们的优秀成员 →",
     missionEyebrow: "Team Profile",
     missionTitle: "团队宗旨与日常",
     introduction: [

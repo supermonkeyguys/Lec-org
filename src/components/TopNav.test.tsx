@@ -4,12 +4,13 @@ import TopNav from "./TopNav";
 
 it("marks the active section and navigates from a button click", () => {
   const onNavigate = vi.fn();
-  render(<TopNav activeId="members" onNavigate={onNavigate} />);
+  render(<TopNav activeId="alumni" onNavigate={onNavigate} />);
 
-  expect(screen.getByRole("link", { name: "成员" })).toHaveAttribute(
+  expect(screen.getByRole("link", { name: "优秀成员" })).toHaveAttribute(
     "aria-current",
     "page"
   );
-  fireEvent.click(screen.getByRole("link", { name: "优秀成员" }));
-  expect(onNavigate).toHaveBeenCalledWith("alumni");
+  expect(screen.queryByRole("link", { name: "成员" })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("link", { name: "招新" }));
+  expect(onNavigate).toHaveBeenCalledWith("recruitment");
 });
