@@ -68,6 +68,10 @@ body {
 }
 
 @media (max-width: 767px) {
+  .site-scroll {
+    scroll-padding-block-start: 0;
+  }
+
   .site-section {
     min-height: auto;
     margin-inline: 0.75rem;
@@ -84,7 +88,7 @@ body {
     margin-block-start: max(1rem, env(safe-area-inset-top));
   }
 
-  .site-section:last-child {
+  .site-section:last-of-type {
     margin-block-end: max(1rem, env(safe-area-inset-bottom));
   }
 }

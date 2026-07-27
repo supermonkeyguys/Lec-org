@@ -45,7 +45,8 @@ it("keeps sections content-sized on small and reduced-motion screens without sna
 });
 
 it("separates site sections into cards on small screens", () => {
-  const rules = mediaRule("max-width: 767px").match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
+  const mobileRule = mediaRule("max-width: 767px");
+  const rules = mobileRule.match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
 
   expect(rules).toContain("margin-inline: 0.75rem;");
   expect(rules).toContain("margin-block: 1rem;");
@@ -54,6 +55,9 @@ it("separates site sections into cards on small screens", () => {
   expect(rules).toContain("border: 1.5px solid var(--color-border);");
   expect(rules).toContain("border-radius:");
   expect(rules).toContain("box-shadow:");
+  expect(mobileRule).toContain(".site-section:last-of-type");
+  expect(mobileRule).not.toContain(".site-section:last-child");
+  expect(mobileRule).toMatch(/\.site-scroll\s*\{\s*scroll-padding-block-start:\s*0;\s*\}/);
 });
 
 it("disables native smooth scrolling and floating animation for reduced motion", () => {

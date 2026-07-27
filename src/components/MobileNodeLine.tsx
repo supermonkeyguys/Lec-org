@@ -12,7 +12,7 @@ export default function MobileNodeLine({
   return (
     <nav
       aria-label="移动端页面导航"
-      className="fixed left-2 top-1/2 z-50 flex -translate-y-1/2 flex-col items-start before:absolute before:inset-y-4 before:left-[1.125rem] before:w-px before:bg-ink sm:hidden"
+      className="fixed left-2 top-1/2 z-50 flex -translate-y-1/2 flex-col items-start before:absolute before:inset-y-4 before:left-[1.125rem] before:w-px before:bg-ink md:hidden"
     >
       {sections.map((section) => {
         const isActive = section.id === activeId;

@@ -10,6 +10,10 @@ it("marks the active section and navigates from a button click", () => {
   expect(desktopHome.parentElement).toHaveClass(
     "sm:justify-center",
   );
+  expect(screen.getByRole("navigation", { name: "主导航" })).toHaveClass(
+    "hidden",
+    "md:block",
+  );
 
   expect(screen.getByRole("link", { name: "优秀成员" })).toHaveAttribute(
     "aria-current",
@@ -24,9 +28,9 @@ it("provides a mobile Node Line with direct section navigation", () => {
   const onNavigate = vi.fn();
   render(<TopNav activeId="alumni" onNavigate={onNavigate} />);
 
-  expect(
-    screen.getByRole("navigation", { name: "移动端页面导航" }),
-  ).toBeInTheDocument();
+  const mobileNavigation = screen.getByRole("navigation", { name: "移动端页面导航" });
+  expect(mobileNavigation).toBeInTheDocument();
+  expect(mobileNavigation).toHaveClass("md:hidden");
   expect(
     screen.queryByRole("combobox", { name: "页面导航" }),
   ).not.toBeInTheDocument();

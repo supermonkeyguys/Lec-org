@@ -12,7 +12,7 @@ export default function TopNav({ activeId, onNavigate }: TopNavProps) {
       <MobileNodeLine activeId={activeId} onNavigate={onNavigate} />
       <nav
         aria-label="主导航"
-        className="top-nav fixed inset-x-0 top-0 z-50 hidden border-b-2 border-ink bg-cream/95 shadow-[0_3px_0_0_rgba(30,41,59,1)] backdrop-blur-sm sm:block"
+        className="top-nav fixed inset-x-0 top-0 z-50 hidden border-b-2 border-ink bg-cream/95 shadow-[0_3px_0_0_rgba(30,41,59,1)] backdrop-blur-sm md:block"
       >
         <div className="no-scrollbar mx-auto flex max-w-5xl items-center gap-1 overflow-x-auto px-4 py-3 sm:justify-center sm:px-6">
           {sections.map((section) => (
