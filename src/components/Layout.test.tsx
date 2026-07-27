@@ -187,3 +187,14 @@ it("updates the mobile Node Line after native scrolling", () => {
     "page",
   );
 });
+
+it("marks a mobile Node Line destination current before its smooth scroll completes", () => {
+  setSmallViewport(true);
+  const { scrollTo } = renderLayout();
+
+  const alumniNode = screen.getByRole("button", { name: "前往优秀成员" });
+  fireEvent.click(alumniNode);
+
+  expect(alumniNode).toHaveAttribute("aria-current", "page");
+  expect(scrollTo).toHaveBeenCalledWith({ top: 3000, behavior: "smooth" });
+});
