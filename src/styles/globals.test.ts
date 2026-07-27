@@ -19,7 +19,7 @@ it("reserves the shared navigation offset at the start of every site section", (
 
   expect(globalStyles).toContain("--site-nav-safe-offset:");
   expect(siteSectionRule).toContain(
-    "padding-block-start: var(--site-nav-safe-offset);"
+    "padding-block-start: calc(var(--site-nav-safe-offset) + 1.5rem);"
   );
 });
 

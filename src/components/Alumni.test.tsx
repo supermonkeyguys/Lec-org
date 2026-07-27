@@ -7,6 +7,7 @@ it("groups alumni by cohort and exposes their outcomes", () => {
 
   expect(screen.getByRole("heading", { name: "往届优秀成员" })).toBeVisible();
   expect(screen.getByText("2019 届")).toBeVisible();
+  expect(screen.queryByText("2023 届")).not.toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "刘洪堃" })).toBeVisible();
   expect(screen.queryByText(/Mock 展示/)).not.toBeInTheDocument();
 

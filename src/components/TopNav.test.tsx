@@ -6,6 +6,10 @@ it("marks the active section and navigates from a button click", () => {
   const onNavigate = vi.fn();
   render(<TopNav activeId="alumni" onNavigate={onNavigate} />);
 
+  expect(screen.getByRole("navigation").firstElementChild).toHaveClass(
+    "sm:justify-center",
+  );
+
   expect(screen.getByRole("link", { name: "优秀成员" })).toHaveAttribute(
     "aria-current",
     "page"

@@ -8,7 +8,7 @@ interface TopNavProps {
 export default function TopNav({ activeId, onNavigate }: TopNavProps) {
   return (
     <nav aria-label="主导航" className="top-nav fixed inset-x-0 top-0 z-50 border-b-2 border-ink bg-cream/95 shadow-[0_3px_0_0_rgba(30,41,59,1)] backdrop-blur-sm">
-      <div className="no-scrollbar mx-auto flex max-w-5xl items-center gap-1 overflow-x-auto px-4 py-3 sm:px-6">
+      <div className="no-scrollbar mx-auto flex max-w-5xl items-center gap-1 overflow-x-auto px-4 py-3 sm:justify-center sm:px-6">
         {sections.map((section) => (
           <a
             key={section.id}

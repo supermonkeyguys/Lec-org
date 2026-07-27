@@ -45,7 +45,7 @@ body {
 
 .site-section {
   min-height: 100svh;
-  padding-block-start: var(--site-nav-safe-offset);
+  padding-block-start: calc(var(--site-nav-safe-offset) + 1.5rem);
 }
 
 .animate-float {

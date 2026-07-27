@@ -25,5 +25,5 @@ export const alumniContent = {
 } as const;
 
 export const alumniMembers: AlumniMember[] = generatedAlumniMembers.filter(
-  (member) => Boolean(member.organization),
+  (member) => Boolean(member.organization) && member.cohort < 2023,
 );
