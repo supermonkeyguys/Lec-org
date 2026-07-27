@@ -6,7 +6,7 @@ it("marks the active section and navigates from a button click", () => {
   const onNavigate = vi.fn();
   render(<TopNav activeId="alumni" onNavigate={onNavigate} />);
 
-  expect(screen.getByRole("navigation").firstElementChild).toHaveClass(
+  expect(screen.getByRole("link", { name: "首页" }).parentElement).toHaveClass(
     "sm:justify-center",
   );
 
@@ -16,5 +16,16 @@ it("marks the active section and navigates from a button click", () => {
   );
   expect(screen.queryByRole("link", { name: "成员" })).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("link", { name: "招新" }));
+  expect(onNavigate).toHaveBeenCalledWith("recruitment");
+});
+
+it("offers a compact mobile section picker", () => {
+  const onNavigate = vi.fn();
+  render(<TopNav activeId="alumni" onNavigate={onNavigate} />);
+
+  const picker = screen.getByRole("combobox", { name: "页面导航" });
+  expect(picker).toHaveValue("alumni");
+
+  fireEvent.change(picker, { target: { value: "recruitment" } });
   expect(onNavigate).toHaveBeenCalledWith("recruitment");
 });
