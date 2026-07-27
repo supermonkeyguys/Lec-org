@@ -56,7 +56,8 @@ function renderLayout() {
           <span data-testid="nested-target">Nested target</span>
         </div>
       </section>
-      <section id="members">Members</section>
+      <section id="achievements">Achievements</section>
+      <section id="directions">Directions</section>
       <section id="alumni">Alumni</section>
       <section id="history">History</section>
       <section id="recruitment">Recruitment</section>
@@ -67,7 +68,8 @@ function renderLayout() {
   const offsets: Record<string, number> = {
     hero: 0,
     mission: 1000,
-    members: 2000,
+    achievements: 2000,
+    directions: 2500,
     alumni: 3000,
     history: 5200,
     recruitment: 6200,
@@ -171,4 +173,17 @@ it("leaves wheel and paging keys native on small screens", () => {
   expect(pageDown.defaultPrevented).toBe(false);
   expect(pageUp.defaultPrevented).toBe(false);
   expect(scrollTo).not.toHaveBeenCalled();
+});
+
+it("updates the mobile Node Line after native scrolling", () => {
+  setSmallViewport(true);
+  const { root } = renderLayout();
+
+  root.scrollTop = 3000;
+  fireEvent.scroll(root);
+
+  expect(screen.getByRole("button", { name: "前往优秀成员" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
 });
