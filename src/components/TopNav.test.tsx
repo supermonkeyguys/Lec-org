@@ -37,7 +37,7 @@ it("provides a mobile Node Line with direct section navigation", () => {
   ).not.toBeInTheDocument();
 
   const alumniNode = screen.getByRole("button", { name: "前往优秀成员" });
-  expect(alumniNode).toHaveClass("size-11");
+  expect(alumniNode).toHaveClass("size-9");
   fireEvent.click(alumniNode);
   expect(onNavigate).toHaveBeenCalledWith("alumni");
 });

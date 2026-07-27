@@ -12,7 +12,7 @@ export default function MobileNodeLine({
   return (
     <nav
       aria-label="移动端页面导航"
-      className="fixed left-2 top-1/2 z-50 flex -translate-y-1/2 flex-col items-start before:absolute before:inset-y-5 before:left-[1.375rem] before:w-px before:bg-ink sm:hidden"
+      className="fixed left-2 top-1/2 z-50 flex -translate-y-1/2 flex-col items-start before:absolute before:inset-y-4 before:left-[1.125rem] before:w-px before:bg-ink sm:hidden"
     >
       {sections.map((section) => {
         const isActive = section.id === activeId;
@@ -23,7 +23,7 @@ export default function MobileNodeLine({
             type="button"
             aria-current={isActive ? "page" : undefined}
             aria-label={`前往${section.label}`}
-            className={`relative z-10 size-11 rounded-full border-2 border-ink transition-colors ${
+            className={`relative z-10 size-9 rounded-full border-2 border-ink transition-colors ${
               isActive
                 ? "bg-ink text-card"
                 : "bg-cream/95 text-ink hover:bg-ink hover:text-card focus-visible:bg-ink focus-visible:text-card"
@@ -33,7 +33,7 @@ export default function MobileNodeLine({
             <span
               aria-hidden="true"
               className={`mx-auto block rounded-full ${
-                isActive ? "size-3 bg-card" : "size-2 border border-current"
+                isActive ? "size-2.5 bg-card" : "size-1.5 border border-current"
               }`}
             />
             {isActive && (
