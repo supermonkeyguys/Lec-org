@@ -11,7 +11,6 @@
     "import:members": "node scripts/member-import.mjs"
   },
   "dependencies": {
-    "@radix-ui/react-dropdown-menu": "^2.1.24",
     "framer-motion": "^12.38.0",
     "next": "16.2.4",
     "react": "19.2.4",

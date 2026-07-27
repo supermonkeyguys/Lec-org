@@ -21,23 +21,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const scrollRoot = scrollRootRef.current;
-    if (!scrollRoot || !("IntersectionObserver" in window)) return;
+    if (!scrollRoot) return;
 
     const sectionElements = getSectionElements(scrollRoot);
+    if (!sectionElements.length) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const activeEntry = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((first, second) => second.intersectionRatio - first.intersectionRatio)[0];
+    const updateActiveSection = () => {
+      const current = sectionElements.reduce(
+        (active, section) =>
+          section.offsetTop <= scrollRoot.scrollTop + 1 ? section : active,
+        sectionElements[0],
+      );
 
-        if (activeEntry) setActiveId(activeEntry.target.id);
-      },
-      { root: scrollRoot, threshold: 0.55 }
-    );
+      setActiveId((previous) =>
+        previous === current.id ? previous : current.id,
+      );
+    };
 
-    sectionElements.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    updateActiveSection();
+    scrollRoot.addEventListener("scroll", updateActiveSection);
+    return () => scrollRoot.removeEventListener("scroll", updateActiveSection);
   }, []);
 
   const handleNavigate = (id: string) => {
@@ -45,6 +48,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const section = document.getElementById(id);
     if (!scrollRoot || !section || !scrollRoot.contains(section)) return;
 
+    setActiveId(id);
     scrollRoot.scrollTo({
       top: section.offsetTop,
       behavior: prefersReducedMotion() ? "auto" : "smooth",
