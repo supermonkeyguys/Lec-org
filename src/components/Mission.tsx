@@ -22,13 +22,10 @@ export default function Mission() {
           <h2 className="text-4xl sm:text-5xl font-bold text-ink text-center mb-16">
             {teamInfo.content.missionTitle}
           </h2>
-          <div className="max-w-2xl mx-auto text-center mb-20">
-            <p className="text-xl text-ink leading-relaxed">
-              {teamInfo.mission}
-            </p>
-            <p className="mt-4 text-base text-muted">
-              {teamInfo.content.missionSubtitle}
-            </p>
+          <div className="mx-auto mb-20 max-w-3xl space-y-5 text-left text-base leading-relaxed text-muted sm:text-lg">
+            {teamInfo.content.introduction.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
           </div>
         </motion.div>
 

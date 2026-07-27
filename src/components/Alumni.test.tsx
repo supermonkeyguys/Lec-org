@@ -13,8 +13,7 @@ it("groups alumni by cohort and exposes their outcomes", () => {
   const liuCard = screen.getByRole("heading", { name: "刘洪堃" }).closest("article");
   expect(liuCard?.querySelector("span.rounded-full.px-2")).toBeNull();
 
-  const zhangCard = screen.getByRole("heading", { name: "张峰" }).closest("article");
-  expect(zhangCard?.querySelector(".text-muted")).toBeNull();
+  expect(screen.queryByRole("heading", { name: "张峰" })).not.toBeInTheDocument();
   expect(container.querySelectorAll("span.rounded-full.px-2:empty")).toHaveLength(0);
   expect(container.querySelectorAll("p.text-muted:empty")).toHaveLength(0);
 });

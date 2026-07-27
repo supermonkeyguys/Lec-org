@@ -24,4 +24,6 @@ export const alumniContent = {
   emptyMessage: "优秀成员资料整理中",
 } as const;
 
-export const alumniMembers: AlumniMember[] = generatedAlumniMembers;
+export const alumniMembers: AlumniMember[] = generatedAlumniMembers.filter(
+  (member) => Boolean(member.organization),
+);
