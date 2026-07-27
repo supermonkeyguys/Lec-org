@@ -70,6 +70,22 @@ body {
 @media (max-width: 767px) {
   .site-section {
     min-height: auto;
+    margin-inline: 0.75rem;
+    margin-block: 1rem;
+    padding-block-start: 4rem;
+    padding-block-end: 4rem;
+    background: var(--color-card);
+    border: 1.5px solid var(--color-border);
+    border-radius: 2rem;
+    box-shadow: 3px 4px 0 rgba(30, 41, 59, 0.18);
+  }
+
+  .site-section:first-child {
+    margin-block-start: max(1rem, env(safe-area-inset-top));
+  }
+
+  .site-section:last-child {
+    margin-block-end: max(1rem, env(safe-area-inset-bottom));
   }
 }
 
