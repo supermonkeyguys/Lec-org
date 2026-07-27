@@ -108,7 +108,7 @@ describe("native section scrolling", () => {
   it("leaves desktop wheel and paging-key scrolling native", () => {
     const { root, scrollTo } = renderLayout();
 
-    fireEvent.click(screen.getByRole("link", { name: "宗旨" }));
+    fireEvent.click(screen.getAllByRole("link", { name: "宗旨" }).at(-1)!);
     expect(scrollTo).toHaveBeenLastCalledWith({ top: 1000, behavior: "smooth" });
     scrollTo.mockClear();
 
@@ -130,7 +130,7 @@ describe("reduced motion", () => {
     setReducedMotion(true);
     const { root, scrollTo } = renderLayout();
 
-    fireEvent.click(screen.getByRole("link", { name: "宗旨" }));
+    fireEvent.click(screen.getAllByRole("link", { name: "宗旨" }).at(-1)!);
     expect(scrollTo).toHaveBeenLastCalledWith({ top: 1000, behavior: "auto" });
     scrollTo.mockClear();
 
