@@ -5,12 +5,13 @@ import {
   sectionFade,
   usePrefersReducedMotion,
 } from "@/config/animations";
+import SectionShell from "./SectionShell";
 
 export default function Timeline() {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <section id="history" className="site-section flex flex-col justify-center py-16 px-6">
+    <SectionShell id="history" className="flex flex-col justify-center py-16 px-6">
       <div className="max-w-3xl mx-auto">
         <motion.div {...sectionFade(Boolean(reducedMotion))}>
           <p className="font-mono text-xs text-muted mb-2 tracking-widest uppercase text-center">
@@ -65,6 +66,6 @@ export default function Timeline() {
           })}
         </div>
       </div>
-    </section>
+    </SectionShell>
   );
 }

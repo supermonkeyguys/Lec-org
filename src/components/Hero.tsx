@@ -2,14 +2,15 @@ import { motion } from "framer-motion";
 import { teamInfo } from "@/data/team";
 import { assetPath } from "@/lib/assetPath";
 import { usePrefersReducedMotion } from "@/config/animations";
+import SectionShell from "./SectionShell";
 
 export default function Hero() {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <section
+    <SectionShell
       id="hero"
-      className="site-section flex items-center justify-center px-6 text-center relative overflow-hidden"
+      className="flex items-center justify-center px-6 text-center relative overflow-hidden"
     >
       <div className="absolute top-20 left-20 w-16 h-16 rounded-full border-2 border-ink/20 animate-float" />
       <div className="absolute bottom-32 right-24 w-24 h-24 rounded-full border-2 border-ink/10 animate-float" style={{ animationDelay: "2s" }} />
@@ -48,6 +49,6 @@ export default function Hero() {
         </motion.a>
       </motion.div>
 
-    </section>
+    </SectionShell>
   );
 }

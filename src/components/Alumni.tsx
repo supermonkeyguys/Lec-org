@@ -4,6 +4,7 @@ import {
   outcomeLabels,
   type AlumniOutcome,
 } from "@/data/alumni";
+import SectionShell from "./SectionShell";
 
 const outcomeClassNames: Record<AlumniOutcome, string> = {
   recommendation: "bg-sky-100 text-sky-700",
@@ -22,9 +23,9 @@ const alumniByCohort = Array.from(
 
 export default function Alumni() {
   return (
-    <section
+    <SectionShell
       id="alumni"
-      className="site-section flex flex-col justify-center px-6 py-16"
+      className="flex flex-col justify-center px-6 py-16"
     >
       <div className="mx-auto w-full max-w-5xl">
         <div className="text-center">
@@ -88,6 +89,6 @@ export default function Alumni() {
           </div>
         )}
       </div>
-    </section>
+    </SectionShell>
   );
 }

@@ -1,5 +1,6 @@
 import { recruitmentInfo } from "@/data/recruitment";
 import { assetPath } from "@/lib/assetPath";
+import SectionShell from "./SectionShell";
 
 const recruitmentDetails = [
   { label: "招新时间", value: recruitmentInfo.period },
@@ -10,9 +11,9 @@ const recruitmentDetails = [
 
 export default function Recruitment() {
   return (
-    <section
+    <SectionShell
       id="recruitment"
-      className="site-section flex flex-col justify-center px-6 py-16"
+      className="flex flex-col justify-center px-6 py-16"
     >
       <div className="mx-auto grid w-full max-w-5xl items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
         <div>
@@ -49,6 +50,6 @@ export default function Recruitment() {
           </figcaption>
         </figure>
       </div>
-    </section>
+    </SectionShell>
   );
 }

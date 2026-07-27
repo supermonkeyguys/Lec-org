@@ -1,10 +1,11 @@
 import { technicalDirections } from "@/data/directions";
+import SectionShell from "./SectionShell";
 
 export default function Directions() {
   return (
-    <section
+    <SectionShell
       id="directions"
-      className="site-section flex flex-col justify-center px-6 py-16"
+      className="flex flex-col justify-center px-6 py-16"
     >
       <div className="mx-auto w-full max-w-5xl">
         <div className="text-center">
@@ -31,6 +32,6 @@ export default function Directions() {
           ))}
         </div>
       </div>
-    </section>
+    </SectionShell>
   );
 }

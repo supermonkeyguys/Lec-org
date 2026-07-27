@@ -1,10 +1,11 @@
 import { achievementsContent } from "@/data/achievements";
+import SectionShell from "./SectionShell";
 
 export default function Achievements() {
   return (
-    <section
+    <SectionShell
       id="achievements"
-      className="site-section flex flex-col justify-center px-6 py-16"
+      className="flex flex-col justify-center px-6 py-16"
     >
       <div className="mx-auto w-full max-w-5xl">
         <div className="text-center">
@@ -46,6 +47,6 @@ export default function Achievements() {
           ))}
         </div>
       </div>
-    </section>
+    </SectionShell>
   );
 }
