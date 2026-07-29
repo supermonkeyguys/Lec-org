@@ -1,6 +1,6 @@
 import { generatedAlumniMembers } from "./member-records.generated";
 
-export type AlumniOutcome = "recommendation" | "graduate-exam" | "employment";
+export type AlumniOutcome = "recommendation" | "graduate-exam" | "further-study" | "employment";
 
 export interface AlumniMember {
   id: string;
@@ -12,8 +12,9 @@ export interface AlumniMember {
 }
 
 export const outcomeLabels: Record<AlumniOutcome, string> = {
-  recommendation: "保研",
-  "graduate-exam": "考研",
+  recommendation: "深造",
+  "graduate-exam": "深造",
+  "further-study": "深造",
   employment: "就业",
 };
 

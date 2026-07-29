@@ -47,7 +47,6 @@ it("shows the complete studio introduction", async () => {
   expect(
     screen.getByText(/乐程软件工作室自 2010 年 6 月创立以来/),
   ).toBeVisible();
-  expect(
-    screen.getByText(/部分成员保研至电子科大、川大等知名大学继续深造/),
-  ).toBeVisible();
+  expect(screen.getByText(/在电子科大、川大等知名大学继续深造/)).toBeVisible();
+  expect(screen.getByText(/助力每一位成员在深造与就业路上少走弯路/)).toBeVisible();
 });
