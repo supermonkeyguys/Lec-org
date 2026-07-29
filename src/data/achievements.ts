@@ -8,7 +8,6 @@ export const achievementsContent = {
   eyebrow: "Team Achievements",
   title: "团队成就",
   subtitle: "用竞赛、项目和成长记录每一次认真投入。",
-  statusMessage: "展示数字与赛事标签均待正式资料确认。",
   stats: [
     {
       label: "省级奖项",
@@ -35,7 +34,7 @@ export const achievementsContent = {
     "全国大学生软件大赛",
     "挑战杯",
     "团体程序设计天梯赛",
-    "CCF CAT",
+    "中国大学生服务外包创新创业大赛",
     "ACM-ICPC",
   ],
 } as const;

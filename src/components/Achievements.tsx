@@ -18,9 +18,6 @@ export default function Achievements() {
           <p className="mx-auto max-w-2xl text-lg text-muted">
             {achievementsContent.subtitle}
           </p>
-          <p className="mt-4 font-mono text-xs text-fade">
-            {achievementsContent.statusMessage}
-          </p>
         </div>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

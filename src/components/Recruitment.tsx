@@ -22,7 +22,7 @@ export default function Recruitment() {
           </p>
           <h2 className="mb-4 text-4xl font-bold text-ink sm:text-5xl">招新报名</h2>
           <p className="max-w-2xl text-lg text-muted">
-            如果你对软件开发、算法或项目实践感兴趣，欢迎在招新期间加入乐程。
+            如果你对我们感兴趣，加入我们吧！
           </p>
 
           <dl className="sketchy-border mt-8 grid gap-5 bg-card p-6 sm:grid-cols-2">
