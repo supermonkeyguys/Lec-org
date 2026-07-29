@@ -7,11 +7,15 @@ import {
 } from "@/config/animations";
 import SectionShell from "./SectionShell";
 
-export default function Timeline() {
+interface TimelineProps {
+  id?: string | null;
+}
+
+export default function Timeline({ id = "history" }: TimelineProps) {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <SectionShell id="history" className="flex flex-col justify-center py-16 px-6">
+    <SectionShell id={id} className="flex flex-col justify-center py-16 px-6">
       <div className="max-w-3xl mx-auto">
         <motion.div {...sectionFade(Boolean(reducedMotion))}>
           <p className="font-mono text-xs text-muted mb-2 tracking-widest uppercase text-center">

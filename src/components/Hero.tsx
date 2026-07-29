@@ -1,12 +1,8 @@
-import { motion } from "framer-motion";
 import { teamInfo } from "@/data/team";
 import { assetPath } from "@/lib/assetPath";
-import { usePrefersReducedMotion } from "@/config/animations";
 import SectionShell from "./SectionShell";
 
 export default function Hero() {
-  const reducedMotion = usePrefersReducedMotion();
-
   return (
     <SectionShell
       id="hero"
@@ -18,12 +14,7 @@ export default function Hero() {
         &lt;/&gt;
       </div>
 
-      <motion.div
-        initial={false}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reducedMotion ? 0 : 0.8, ease: "easeOut" }}
-        className="max-w-3xl"
-      >
+      <div className="max-w-3xl">
         <img
           src={assetPath("/logo.jpg")}
           alt={teamInfo.name}
@@ -43,15 +34,13 @@ export default function Hero() {
           {teamInfo.mission}
         </p>
 
-        <motion.a
+        <a
           href="#alumni"
           className="inline-block mt-12 sketchy-border bg-card px-8 py-3 text-ink no-underline font-mono text-sm hover:-translate-y-0.5 transition-transform"
-          whileHover={reducedMotion ? undefined : { y: -2 }}
-          whileTap={reducedMotion ? undefined : { y: 0 }}
         >
           {teamInfo.content.heroCta}
-        </motion.a>
-      </motion.div>
+        </a>
+      </div>
 
     </SectionShell>
   );

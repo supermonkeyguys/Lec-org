@@ -1,21 +1,10 @@
-import React from "react";
 import { createEvent, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Layout from "./Layout";
 
-vi.mock("framer-motion", () => ({
-  MotionConfig: ({
-    children,
-    reducedMotion,
-  }: {
-    children: React.ReactNode;
-    reducedMotion: string;
-  }) => (
-    <div data-testid="motion-config" data-reduced-motion={reducedMotion}>
-      {children}
-    </div>
-  ),
-}));
+vi.mock("framer-motion", () => {
+  throw new Error("Layout must not load Framer Motion");
+});
 
 class IntersectionObserverStub {
   observe = vi.fn();
@@ -149,13 +138,6 @@ describe("reduced motion", () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
-  it("configures Framer Motion to honor the user's reduced-motion setting", () => {
-    renderLayout();
-    expect(screen.getByTestId("motion-config")).toHaveAttribute(
-      "data-reduced-motion",
-      "user",
-    );
-  });
 });
 
 it("leaves wheel and paging keys native on small screens", () => {

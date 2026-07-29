@@ -10,11 +10,15 @@ import SectionShell from "./SectionShell";
 
 const emojis = ["👥", "🕒", "💬", "💻"];
 
-export default function Mission() {
+interface MissionProps {
+  id?: string | null;
+}
+
+export default function Mission({ id = "mission" }: MissionProps) {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <SectionShell id="mission" className="flex flex-col justify-center py-16 px-6">
+    <SectionShell id={id} className="flex flex-col justify-center py-16 px-6">
       <div className="max-w-4xl mx-auto">
         <motion.div {...sectionFade(Boolean(reducedMotion))}>
           <p className="font-mono text-xs text-muted mb-2 tracking-widest uppercase text-center">
