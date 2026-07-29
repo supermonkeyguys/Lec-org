@@ -32,6 +32,11 @@ it("shows the newest grade by default and switches the visible alumni", () => {
   expect(newestTab).toHaveAttribute("aria-selected", "true");
   expect(newestTab).toHaveAttribute("id", `alumni-grade-tab-${newestGrade}`);
   expect(newestTab).toHaveAttribute("aria-controls", `alumni-grade-${newestGrade}`);
+  expect(newestTab).toHaveAttribute("tabindex", "0");
+  expect(screen.getByRole("tab", { name: `${nextGrade}级` })).toHaveAttribute(
+    "tabindex",
+    "-1",
+  );
   expect(screen.getByRole("tabpanel")).toHaveAttribute(
     "aria-labelledby",
     `alumni-grade-tab-${newestGrade}`,
@@ -60,6 +65,49 @@ it("shows the newest grade by default and switches the visible alumni", () => {
   );
   expect(screen.getByRole("heading", { name: nextMember.name })).toBeVisible();
   expect(screen.queryByRole("heading", { name: newestMember.name })).not.toBeInTheDocument();
+});
+
+it("keeps every tab panel in the DOM and hides the non-selected panels", () => {
+  render(<Alumni />);
+
+  screen.getAllByRole("tab").forEach((tab) => {
+    const panel = document.getElementById(tab.getAttribute("aria-controls")!);
+
+    expect(panel).toHaveAttribute("role", "tabpanel");
+    expect(panel).toHaveAttribute("aria-labelledby", tab.id);
+    expect(panel?.hidden).toBe(tab.getAttribute("aria-selected") !== "true");
+  });
+});
+
+it("uses roving tab keyboard navigation to select and focus grade panels", () => {
+  render(<Alumni />);
+
+  const newestTab = screen.getByRole("tab", { name: "2025级" });
+  const nextTab = screen.getByRole("tab", { name: "2024级" });
+  const oldestTab = screen.getByRole("tab", { name: "2019级" });
+
+  newestTab.focus();
+  fireEvent.keyDown(newestTab, { key: "ArrowRight" });
+  expect(nextTab).toHaveFocus();
+  expect(nextTab).toHaveAttribute("aria-selected", "true");
+  expect(nextTab).toHaveAttribute("tabindex", "0");
+  expect(newestTab).toHaveAttribute("tabindex", "-1");
+
+  fireEvent.keyDown(nextTab, { key: "ArrowUp" });
+  expect(newestTab).toHaveFocus();
+  expect(newestTab).toHaveAttribute("aria-selected", "true");
+
+  fireEvent.keyDown(newestTab, { key: "ArrowLeft" });
+  expect(oldestTab).toHaveFocus();
+  expect(oldestTab).toHaveAttribute("aria-selected", "true");
+
+  fireEvent.keyDown(oldestTab, { key: "Home" });
+  expect(newestTab).toHaveFocus();
+  expect(newestTab).toHaveAttribute("aria-selected", "true");
+
+  fireEvent.keyDown(newestTab, { key: "End" });
+  expect(oldestTab).toHaveFocus();
+  expect(oldestTab).toHaveAttribute("aria-selected", "true");
 });
 
 it("retains graduate-exam classifications behind unified further-study labels", () => {

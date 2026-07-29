@@ -193,3 +193,27 @@ it("keeps a clicked mobile destination active while smooth scrolling crosses ear
 
   expect(alumniNode).toHaveAttribute("aria-current", "page");
 });
+
+it.each([
+  "ArrowUp",
+  "ArrowDown",
+  "PageUp",
+  "PageDown",
+  "Home",
+  "End",
+  "Space",
+  " ",
+])("cancels pending smooth navigation when the user scrolls with %j", (key) => {
+  const { root } = renderLayout();
+
+  fireEvent.click(screen.getAllByRole("link", { name: "优秀成员" }).at(-1)!);
+
+  root.scrollTop = 2000;
+  fireEvent.keyDown(root, { key });
+  fireEvent.scroll(root);
+
+  expect(screen.getAllByRole("link", { name: "成就" }).at(-1)).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+});

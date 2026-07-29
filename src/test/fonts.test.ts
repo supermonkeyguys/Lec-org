@@ -11,8 +11,14 @@ it("uses system font stacks without shipping web font CSS", () => {
     resolve(process.cwd(), "src/pages/_app.tsx"),
     "utf8",
   );
+  const documentSource = readFileSync(
+    resolve(process.cwd(), "src/pages/_document.tsx"),
+    "utf8",
+  );
 
-  expect(appSource).toContain("fontVariables");
+  expect(documentSource).toContain('import { fontVariables } from "@/styles/fonts"');
+  expect(documentSource).toContain("<body className={fontVariables}>");
+  expect(appSource).not.toContain("fontVariables");
   expect(styleSource).toContain("var(--font-lec-hand, -apple-system)");
   expect(styleSource).toContain("var(--font-lec-mono, ui-monospace)");
   expect(styleSource).toContain('"PingFang SC"');

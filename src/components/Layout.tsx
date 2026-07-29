@@ -2,6 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { sections } from "@/config/sections";
 import TopNav from "./TopNav";
 
+const keyboardScrollKeys = new Set([
+  "ArrowUp",
+  "ArrowDown",
+  "PageUp",
+  "PageDown",
+  "Home",
+  "End",
+  "Space",
+  "Spacebar",
+  " ",
+]);
+
 function getSectionElements(scrollRoot: HTMLElement) {
   return sections
     .map(({ id }) => document.getElementById(id))
@@ -53,17 +65,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       pendingNavigationIdRef.current = null;
     };
 
+    const cancelPendingNavigationForKeyboardScroll = (event: KeyboardEvent) => {
+      if (keyboardScrollKeys.has(event.key)) {
+        cancelPendingNavigation();
+      }
+    };
+
     updateActiveSection();
     scrollRoot.addEventListener("scroll", updateActiveSection);
     scrollRoot.addEventListener("scrollend", updateActiveSection);
     scrollRoot.addEventListener("wheel", cancelPendingNavigation, { passive: true });
     scrollRoot.addEventListener("touchstart", cancelPendingNavigation, { passive: true });
+    scrollRoot.addEventListener("keydown", cancelPendingNavigationForKeyboardScroll);
 
     return () => {
       scrollRoot.removeEventListener("scroll", updateActiveSection);
       scrollRoot.removeEventListener("scrollend", updateActiveSection);
       scrollRoot.removeEventListener("wheel", cancelPendingNavigation);
       scrollRoot.removeEventListener("touchstart", cancelPendingNavigation);
+      scrollRoot.removeEventListener("keydown", cancelPendingNavigationForKeyboardScroll);
     };
   }, []);
 
