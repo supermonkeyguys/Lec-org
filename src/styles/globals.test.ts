@@ -31,33 +31,19 @@ it("does not mandate snap scrolling for the base site rules", () => {
   expect(siteSectionRule).not.toContain("scroll-snap");
 });
 
-it("keeps sections content-sized on small and reduced-motion screens without snap rules", () => {
+it("uses gentle full-screen snapping on mobile but not for reduced motion", () => {
   const mobileRule = mediaRule("max-width: 767px");
   const reducedMotionRule = mediaRule("prefers-reduced-motion: reduce");
+  const mobileScrollRule = mobileRule.match(/\.site-scroll\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
+  const mobileSectionRule = mobileRule.match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
 
-  for (const rule of [mobileRule, reducedMotionRule]) {
-    const siteSectionRule = rule.match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
-
-    expect(siteSectionRule).toBeDefined();
-    expect(siteSectionRule).toContain("min-height: auto;");
-    expect(siteSectionRule).not.toContain("scroll-snap");
-  }
-});
-
-it("separates site sections into cards on small screens", () => {
-  const mobileRule = mediaRule("max-width: 767px");
-  const rules = mobileRule.match(/\.site-section\s*\{(?<rules>[^}]*)\}/)?.groups?.rules;
-
-  expect(rules).toContain("margin-inline: 0.75rem;");
-  expect(rules).toContain("margin-block: 1rem;");
-  expect(rules).toContain("padding-block-start: 4rem;");
-  expect(rules).toContain("background: var(--color-card);");
-  expect(rules).toContain("border: 1.5px solid var(--color-border);");
-  expect(rules).toContain("border-radius:");
-  expect(rules).toContain("box-shadow:");
-  expect(mobileRule).toContain(".site-section:last-of-type");
-  expect(mobileRule).not.toContain(".site-section:last-child");
-  expect(mobileRule).toMatch(/\.site-scroll\s*\{\s*scroll-padding-block-start:\s*0;\s*\}/);
+  expect(mobileScrollRule).toContain("scroll-snap-type: y proximity;");
+  expect(mobileScrollRule).toContain("padding-bottom:");
+  expect(mobileSectionRule).toContain("min-height: 100svh;");
+  expect(mobileSectionRule).toContain("scroll-snap-align: start;");
+  expect(mobileSectionRule).not.toContain("margin-inline");
+  expect(mobileSectionRule).not.toContain("border-radius");
+  expect(reducedMotionRule).toContain("scroll-snap-type: none;");
 });
 
 it("disables native smooth scrolling and floating animation for reduced motion", () => {

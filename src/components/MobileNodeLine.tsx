@@ -12,7 +12,7 @@ export default function MobileNodeLine({
   return (
     <nav
       aria-label="移动端页面导航"
-      className="fixed left-2 top-1/2 z-50 flex -translate-y-1/2 flex-col items-start before:absolute before:inset-y-4 before:left-[1.125rem] before:w-px before:bg-ink md:hidden"
+      className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-50 flex -translate-x-1/2 flex-row items-center gap-1 rounded-full border-2 border-ink bg-cream/95 p-1 shadow-[3px_3px_0_0_rgba(30,41,59,1)] backdrop-blur-sm md:hidden"
     >
       {sections.map((section) => {
         const isActive = section.id === activeId;
@@ -39,7 +39,7 @@ export default function MobileNodeLine({
             {isActive && (
               <span
                 aria-hidden="true"
-                className="absolute left-full top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap rounded-full border-2 border-ink bg-card px-2 py-1 font-mono text-xs text-ink shadow-[2px_2px_0_0_rgba(30,41,59,1)]"
+                className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full border-2 border-ink bg-card px-2 py-1 font-mono text-xs text-ink shadow-[2px_2px_0_0_rgba(30,41,59,1)]"
               >
                 {section.label}
               </span>

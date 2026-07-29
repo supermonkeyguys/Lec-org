@@ -180,3 +180,16 @@ it("marks a mobile Node Line destination current before its smooth scroll comple
   expect(alumniNode).toHaveAttribute("aria-current", "page");
   expect(scrollTo).toHaveBeenCalledWith({ top: 3000, behavior: "smooth" });
 });
+
+it("keeps a clicked mobile destination active while smooth scrolling crosses earlier sections", () => {
+  setSmallViewport(true);
+  const { root } = renderLayout();
+
+  const alumniNode = screen.getByRole("button", { name: "前往优秀成员" });
+  fireEvent.click(alumniNode);
+
+  root.scrollTop = 2000;
+  fireEvent.scroll(root);
+
+  expect(alumniNode).toHaveAttribute("aria-current", "page");
+});

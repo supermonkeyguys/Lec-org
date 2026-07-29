@@ -16,6 +16,7 @@ function prefersReducedMotion() {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const scrollRootRef = useRef<HTMLElement>(null);
+  const pendingNavigationIdRef = useRef<string | null>(null);
   const [activeId, setActiveId] = useState(sections[0].id);
 
   useEffect(() => {
@@ -26,6 +27,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     if (!sectionElements.length) return;
 
     const updateActiveSection = () => {
+      const pendingId = pendingNavigationIdRef.current;
+      if (pendingId) {
+        const target = sectionElements.find((section) => section.id === pendingId);
+
+        if (target && Math.abs(scrollRoot.scrollTop - target.offsetTop) > 2) {
+          return;
+        }
+
+        pendingNavigationIdRef.current = null;
+      }
+
       const current = sectionElements.reduce(
         (active, section) =>
           section.offsetTop <= scrollRoot.scrollTop + 1 ? section : active,
@@ -37,9 +49,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       );
     };
 
+    const cancelPendingNavigation = () => {
+      pendingNavigationIdRef.current = null;
+    };
+
     updateActiveSection();
     scrollRoot.addEventListener("scroll", updateActiveSection);
-    return () => scrollRoot.removeEventListener("scroll", updateActiveSection);
+    scrollRoot.addEventListener("scrollend", updateActiveSection);
+    scrollRoot.addEventListener("wheel", cancelPendingNavigation, { passive: true });
+    scrollRoot.addEventListener("touchstart", cancelPendingNavigation, { passive: true });
+
+    return () => {
+      scrollRoot.removeEventListener("scroll", updateActiveSection);
+      scrollRoot.removeEventListener("scrollend", updateActiveSection);
+      scrollRoot.removeEventListener("wheel", cancelPendingNavigation);
+      scrollRoot.removeEventListener("touchstart", cancelPendingNavigation);
+    };
   }, []);
 
   const handleNavigate = (id: string) => {
@@ -47,10 +72,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const section = document.getElementById(id);
     if (!scrollRoot || !section || !scrollRoot.contains(section)) return;
 
+    const behavior = prefersReducedMotion() ? "auto" : "smooth";
+    pendingNavigationIdRef.current = behavior === "smooth" ? id : null;
     setActiveId(id);
     scrollRoot.scrollTo({
       top: section.offsetTop,
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      behavior,
     });
   };
 

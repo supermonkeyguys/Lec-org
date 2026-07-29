@@ -7,8 +7,8 @@
   --color-fade: #94a3b8;
   --color-card: #ffffff;
   --color-border: #1e293b;
-  --font-hand: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-hand: var(--font-lec-hand, -apple-system), BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: var(--font-lec-mono, ui-monospace), SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 *,
@@ -70,26 +70,15 @@ body {
 @media (max-width: 767px) {
   .site-scroll {
     scroll-padding-block-start: 0;
+    scroll-snap-type: y proximity;
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 
   .site-section {
-    min-height: auto;
-    margin-inline: 0.75rem;
-    margin-block: 1rem;
-    padding-block-start: 4rem;
-    padding-block-end: 4rem;
-    background: var(--color-card);
-    border: 1.5px solid var(--color-border);
-    border-radius: 2rem;
-    box-shadow: 3px 4px 0 rgba(30, 41, 59, 0.18);
-  }
-
-  .site-section:first-child {
-    margin-block-start: max(1rem, env(safe-area-inset-top));
-  }
-
-  .site-section:last-of-type {
-    margin-block-end: max(1rem, env(safe-area-inset-bottom));
+    min-height: 100svh;
+    scroll-snap-align: start;
+    padding-block-start: max(2rem, env(safe-area-inset-top));
+    padding-block-end: calc(5.5rem + env(safe-area-inset-bottom));
   }
 }
 
@@ -100,6 +89,10 @@ body {
 
   .site-section {
     min-height: auto;
+  }
+
+  .site-scroll {
+    scroll-snap-type: none;
   }
 
   .animate-float {
