@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { MotionConfig } from "framer-motion";
 import { sections } from "@/config/sections";
 import TopNav from "./TopNav";
 
@@ -56,19 +55,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <MotionConfig reducedMotion="user">
-      <div className="min-h-screen">
-        <TopNav activeId={activeId} onNavigate={handleNavigate} />
-        <main
-          id="site-scroll-root"
-          ref={scrollRootRef}
-          aria-label="主内容分段滚动"
-          tabIndex={0}
-          className="site-scroll no-scrollbar h-[100svh] overflow-y-auto"
-        >
-          {children}
-        </main>
-      </div>
-    </MotionConfig>
+    <div className="min-h-screen">
+      <TopNav activeId={activeId} onNavigate={handleNavigate} />
+      <main
+        id="site-scroll-root"
+        ref={scrollRootRef}
+        aria-label="主内容分段滚动"
+        tabIndex={0}
+        className="site-scroll no-scrollbar h-[100svh] overflow-y-auto"
+      >
+        {children}
+      </main>
+    </div>
   );
 }

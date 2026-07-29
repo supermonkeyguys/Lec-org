@@ -1,22 +1,29 @@
+import dynamic from "next/dynamic";
 import Layout from "@/components/Layout";
 import Hero from "@/components/Hero";
-import Mission from "@/components/Mission";
 import Achievements from "@/components/Achievements";
 import Directions from "@/components/Directions";
 import Alumni from "@/components/Alumni";
-import Timeline from "@/components/Timeline";
 import Recruitment from "@/components/Recruitment";
 import Footer from "@/components/Footer";
+import DeferredSection from "@/components/DeferredSection";
+
+const Mission = dynamic(() => import("@/components/Mission"), { ssr: false });
+const Timeline = dynamic(() => import("@/components/Timeline"), { ssr: false });
 
 export default function Home() {
   return (
     <Layout>
       <Hero />
-      <Mission />
+      <DeferredSection id="mission" minHeight="100svh">
+        {() => <Mission id={null} />}
+      </DeferredSection>
       <Achievements />
       <Directions />
       <Alumni />
-      <Timeline />
+      <DeferredSection id="history" minHeight="100svh">
+        {() => <Timeline id={null} />}
+      </DeferredSection>
       <Recruitment />
       <Footer />
     </Layout>

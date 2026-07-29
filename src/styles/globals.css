@@ -7,8 +7,8 @@
   --color-fade: #94a3b8;
   --color-card: #ffffff;
   --color-border: #1e293b;
-  --font-hand: "Patrick Hand", "Noto Sans SC", cursive;
-  --font-mono: "Space Mono", monospace;
+  --font-hand: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 *,

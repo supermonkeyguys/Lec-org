@@ -5,16 +5,20 @@ import {
   sectionFade,
   usePrefersReducedMotion,
 } from "@/config/animations";
-import { assetPath } from "@/lib/assetPath";
+import { responsiveImageProps } from "@/lib/responsiveImage";
 import SectionShell from "./SectionShell";
 
 const emojis = ["👥", "🕒", "💬", "💻"];
 
-export default function Mission() {
+interface MissionProps {
+  id?: string | null;
+}
+
+export default function Mission({ id = "mission" }: MissionProps) {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <SectionShell id="mission" className="flex flex-col justify-center py-16 px-6">
+    <SectionShell id={id} className="flex flex-col justify-center py-16 px-6">
       <div className="max-w-4xl mx-auto">
         <motion.div {...sectionFade(Boolean(reducedMotion))}>
           <p className="font-mono text-xs text-muted mb-2 tracking-widest uppercase text-center">
@@ -33,8 +37,8 @@ export default function Mission() {
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 mb-12">
           {teamInfo.aboutImages.map((image) => (
             <img
-              key={image.src}
-              src={assetPath(image.src)}
+              key={image.alt}
+              {...responsiveImageProps(image.image, image.sizes)}
               alt={image.alt}
               loading="lazy"
               decoding="async"

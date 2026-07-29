@@ -9,6 +9,10 @@ export default function Footer() {
       <img
         src={assetPath("/logo.jpg")}
         alt={teamInfo.name}
+        width={48}
+        height={48}
+        loading="lazy"
+        decoding="async"
         className="w-12 h-12 mx-auto mb-4 sketchy-border-sm object-contain bg-card"
       />
       <p className="text-xl font-bold text-ink mb-2">

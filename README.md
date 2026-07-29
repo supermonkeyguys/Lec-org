@@ -25,10 +25,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - 团队成就：`src/data/achievements.ts`
 - 技术方向：`src/data/directions.ts`
 - 招新信息：`src/data/recruitment.ts`
-- 团队图片：`public/about/`
-- 招新二维码：`public/recruitment/`
+- 团队图片源文件：`assets/image-source/about/`
+- 招新二维码源文件：`assets/image-source/recruitment/`
 
 Excel 或正式资料到来后，只需替换以上数据文件与本地资源。
+
+### 图片发布
+
+将新原图放入 `assets/image-source/about/` 或
+`assets/image-source/recruitment/` 后，运行 `npm run optimize:images`，提交生成的
+`public/media/` 文件和 `src/data/image-assets.generated.ts`。不要把原始大图放回
+`public/`，否则静态部署会再次携带未使用的大文件。
 
 ## 成员 Excel 导入与 CI
 
