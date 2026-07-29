@@ -28,7 +28,12 @@ it("prefixes every mission gallery image for a GitHub Pages project site", async
   teamInfo.aboutImages.forEach((image) => {
     const galleryImage = screen.getByRole("img", { name: image.alt });
 
-    expect(galleryImage).toHaveAttribute("src", `/Lec-org${image.src}`);
+    expect(galleryImage).toHaveAttribute("src", `/Lec-org${image.image.src}`);
+    expect(galleryImage).toHaveAttribute("srcset", expect.stringContaining(" 320w"));
+    expect(galleryImage).toHaveAttribute(
+      "sizes",
+      "(min-width: 640px) 16rem, calc((100vw - 4rem) / 2)",
+    );
     expect(galleryImage).toHaveAttribute("loading", "lazy");
     expect(galleryImage).toHaveAttribute("decoding", "async");
   });

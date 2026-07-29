@@ -27,6 +27,10 @@ export default function Hero() {
         <img
           src={assetPath("/logo.jpg")}
           alt={teamInfo.name}
+          width={400}
+          height={400}
+          fetchPriority="high"
+          decoding="async"
           className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-8 sketchy-border object-contain bg-card"
         />
         <p className="font-mono text-sm text-muted mb-4 tracking-widest uppercase">

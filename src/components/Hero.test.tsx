@@ -24,4 +24,9 @@ it("links the hero call to action to the alumni section", () => {
   expect(
     screen.getByRole("link", { name: "认识我们的优秀成员 →" }),
   ).toHaveAttribute("href", "#alumni");
+
+  const logo = screen.getByRole("img", { name: "LEC 实验室" });
+  expect(logo).toHaveAttribute("width", "400");
+  expect(logo).toHaveAttribute("height", "400");
+  expect(logo).toHaveAttribute("fetchpriority", "high");
 });

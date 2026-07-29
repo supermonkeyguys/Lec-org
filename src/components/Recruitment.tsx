@@ -1,5 +1,5 @@
 import { recruitmentInfo } from "@/data/recruitment";
-import { assetPath } from "@/lib/assetPath";
+import { responsiveImageProps } from "@/lib/responsiveImage";
 import SectionShell from "./SectionShell";
 
 const recruitmentDetails = [
@@ -39,7 +39,10 @@ export default function Recruitment() {
 
         <figure className="sketchy-border mx-auto w-full max-w-sm bg-card p-5 text-center">
           <img
-            src={assetPath(recruitmentInfo.qrImage)}
+            {...responsiveImageProps(
+              recruitmentInfo.qrImage,
+              "(min-width: 1024px) 24rem, min(100vw - 3rem, 18rem)",
+            )}
             alt="乐程官方招新群二维码"
             loading="lazy"
             decoding="async"
