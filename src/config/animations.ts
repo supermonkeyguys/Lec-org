@@ -51,3 +51,14 @@ export const itemFade = (delay: number = 0, reducedMotion = false) =>
       delay: reducedMotion ? 0 : delay,
     },
   } as const);
+
+export const cardReveal = (delay: number = 0, reducedMotion = false) =>
+  ({
+    initial: "hidden",
+    animate: "visible",
+    variants: fadeInUp,
+    transition: {
+      duration: reducedMotion ? 0 : 0.35,
+      delay: reducedMotion ? 0 : delay,
+    },
+  } as const);
