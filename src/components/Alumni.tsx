@@ -79,6 +79,7 @@ export default function Alumni() {
                       ? "bg-ink text-card"
                       : "bg-card text-muted hover:bg-ink/10 hover:text-ink"
                   }`}
+                  id={`alumni-grade-tab-${cohort}`}
                   key={cohort}
                   onClick={() => setSelectedGrade(cohort)}
                   role="tab"
@@ -90,6 +91,7 @@ export default function Alumni() {
             </div>
 
             <div
+              aria-labelledby={`alumni-grade-tab-${selectedGrade}`}
               id={`alumni-grade-${selectedGrade}`}
               role="tabpanel"
             >

@@ -2,6 +2,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import Alumni from "./Alumni";
+import { alumniMembers } from "@/data/alumni";
 import { members } from "@/data/members";
 
 vi.mock("framer-motion", () => ({
@@ -29,23 +30,45 @@ it("shows the newest grade by default and switches the visible alumni", () => {
 
   const newestTab = screen.getByRole("tab", { name: `${newestGrade}级` });
   expect(newestTab).toHaveAttribute("aria-selected", "true");
+  expect(newestTab).toHaveAttribute("id", `alumni-grade-tab-${newestGrade}`);
+  expect(newestTab).toHaveAttribute("aria-controls", `alumni-grade-${newestGrade}`);
+  expect(screen.getByRole("tabpanel")).toHaveAttribute(
+    "aria-labelledby",
+    `alumni-grade-tab-${newestGrade}`,
+  );
   expect(newestTab).toHaveClass("sketchy-border", "bg-ink", "text-card");
   expect(screen.getByRole("heading", { name: newestMember.name })).toBeVisible();
   expect(screen.queryByRole("heading", { name: nextMember.name })).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("tab", { name: `${nextGrade}级` }));
 
-  expect(screen.getByRole("tab", { name: `${nextGrade}级` })).toHaveAttribute(
+  const nextTab = screen.getByRole("tab", { name: `${nextGrade}级` });
+  expect(nextTab).toHaveAttribute(
     "aria-selected",
     "true",
   );
-  expect(screen.getByRole("tab", { name: `${nextGrade}级` })).toHaveClass(
+  expect(nextTab).toHaveAttribute("id", `alumni-grade-tab-${nextGrade}`);
+  expect(nextTab).toHaveAttribute("aria-controls", `alumni-grade-${nextGrade}`);
+  expect(screen.getByRole("tabpanel")).toHaveAttribute(
+    "aria-labelledby",
+    `alumni-grade-tab-${nextGrade}`,
+  );
+  expect(nextTab).toHaveClass(
     "sketchy-border",
     "bg-ink",
     "text-card",
   );
   expect(screen.getByRole("heading", { name: nextMember.name })).toBeVisible();
   expect(screen.queryByRole("heading", { name: newestMember.name })).not.toBeInTheDocument();
+});
+
+it("retains graduate-exam classifications behind unified further-study labels", () => {
+  expect(alumniMembers.find((member) => member.name === "曹志鹏")?.outcome).toBe(
+    "graduate-exam",
+  );
+  expect(alumniMembers.find((member) => member.name === "孙钰镒")?.outcome).toBe(
+    "graduate-exam",
+  );
 });
 
 it("groups alumni by cohort and exposes their outcomes", () => {

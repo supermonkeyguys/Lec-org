@@ -37,15 +37,15 @@ const sourceWorkbookConfigurationError = process.env.CI && (
   : undefined;
 
 const validRows = [
-  ...Array.from({ length: 65 }, (_, index) => [
-    `${19 + Math.floor(index / 13)}级`,
-    index % 2 === 0 ? "保研" : "",
+  ...Array.from({ length: 53 }, (_, index) => [
+    `${19 + Math.floor(index / 14)}级`,
+    index % 2 === 0 ? "保研" : "就业",
     "软件工程",
     `校友${index + 1}`,
     "去向",
   ]),
-  ...Array.from({ length: 23 }, (_, index) => [
-    index < 12 ? "24级" : "25级",
+  ...Array.from({ length: 35 }, (_, index) => [
+    index < 12 ? "23级" : index < 24 ? "24级" : "25级",
     "",
     "软件工程",
     `在读${index + 1}`,
@@ -166,8 +166,13 @@ describe("member workbook normalization", () => {
   });
 
   it("maps source directions to alumni outcomes", () => {
-    expect(mapOutcome("深造")).toBe("graduate-exam");
+    expect(mapOutcome("深造")).toBe("further-study");
     expect(mapOutcome("考公")).toBe("employment");
+  });
+
+  it("retains the source classifications behind two further-study records", () => {
+    expect(mapOutcome("深造", 2019, "曹志鹏")).toBe("graduate-exam");
+    expect(mapOutcome("深造", 2020, "孙钰镒")).toBe("graduate-exam");
   });
 
   it("partitions current members by cohort", () => {
@@ -218,6 +223,7 @@ describe("member workbook normalization", () => {
     const directory = await mkdtemp(join(tmpdir(), "member-import-"));
     const rowsWithNumericCohorts: unknown[][] = validRows.map((row) => [...row]);
     rowsWithNumericCohorts[0][0] = 19;
+    rowsWithNumericCohorts[53][0] = 23;
     rowsWithNumericCohorts[65][0] = 24;
     rowsWithNumericCohorts[77][0] = 25;
     const inputPath = await createWorkbook(directory, [expectedHeaders, ...rowsWithNumericCohorts]);
@@ -225,6 +231,7 @@ describe("member workbook normalization", () => {
 
     await expect(importMembers(inputPath, outputPath)).resolves.toMatchObject({
       currentMembers: expect.arrayContaining([
+        expect.objectContaining({ cohort: 2023 }),
         expect.objectContaining({ cohort: 2024 }),
         expect.objectContaining({ cohort: 2025 }),
       ]),
@@ -253,7 +260,7 @@ describe("member workbook normalization", () => {
     const originalOutput = "export const preserved = true;\n";
     await writeFile(outputPath, originalOutput);
 
-    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/23 current/i);
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/35 current/i);
     await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
   });
 
@@ -348,20 +355,20 @@ describe("member workbook normalization", () => {
     },
   );
 
-  it("writes the 23/65 partitions into one generated records module", async () => {
+  it("writes the 35/53 partitions into one generated records module", async () => {
     const directory = await mkdtemp(join(tmpdir(), "member-import-"));
     const inputPath = await createWorkbook(directory, [expectedHeaders, ...validRows]);
     const outputPath = join(directory, "member-records.generated.ts");
 
     await expect(importMembers(inputPath, outputPath)).resolves.toMatchObject({
-      currentMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2024 })]),
+      currentMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2023 })]),
       alumniMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2019 })]),
     });
     const generatedOutput = await readFile(outputPath, "utf8");
     expect(generatedOutput).toContain("export const generatedMembers");
     expect(generatedOutput).toContain("export const generatedAlumniMembers");
-    expect(generatedOutput.match(/id: "member-/g)).toHaveLength(23);
-    expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(65);
+    expect(generatedOutput.match(/id: "member-/g)).toHaveLength(35);
+    expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(53);
   });
 
   it.skipIf(process.env.MEMBER_SOURCE_CONFIG_PROBE === "1").each([
@@ -400,26 +407,31 @@ describe("member workbook normalization", () => {
   }
 
   it.runIf(sourceWorkbookIsReadable && !sourceWorkbookConfigurationError)(
-    "imports the real source workbook into 23/65 partitions",
+    "imports the real source workbook into 35/53 partitions",
     async () => {
       const directory = await mkdtemp(join(tmpdir(), "member-import-"));
       const outputPath = join(directory, "member-records.generated.ts");
 
       const records = await importMembers(sourceWorkbookPath, outputPath);
 
-      expect(records.currentMembers).toHaveLength(23);
-      expect(records.alumniMembers).toHaveLength(65);
+      expect(records.currentMembers).toHaveLength(35);
+      expect(records.alumniMembers).toHaveLength(53);
       expect(records.currentMembers).toEqual(expect.arrayContaining([
-        { cohort: 2024, direction: "", major: "软工", name: "gyf", destination: "" },
-        { cohort: 2025, direction: "", major: "", name: "ws", destination: "" },
+        { cohort: 2023, direction: "就业", major: "软工", name: "陈居浩", destination: "美团" },
+        { cohort: 2024, direction: "", major: "软工", name: "龚云飞", destination: "" },
+        { cohort: 2025, direction: "", major: "", name: "王硕", destination: "" },
       ]));
       expect(records.alumniMembers).toContainEqual({
         cohort: 2019,
-        direction: "",
+        direction: "深造",
         major: "物联网",
         name: "刘洪堃",
         destination: "电科",
       });
+      expect(records.alumniMembers).toEqual(expect.arrayContaining([
+        { cohort: 2022, direction: "就业", major: "物联网", name: "陈信豪", destination: "字节跳动" },
+        { cohort: 2022, direction: "深造", major: "物联网", name: "隋炀", destination: "天津大学" },
+      ]));
       const generatedOutput = await readFile(outputPath, "utf8");
       const goldenOutput = await readFile(
         join(process.cwd(), "src/data/member-records.generated.ts"),

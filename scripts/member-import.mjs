@@ -5,6 +5,20 @@ import ExcelJS from "exceljs";
 
 const expectedHeaders = ["年级", "方向", "专业", "姓名", "毕业去向"];
 const allowedDirections = new Set(["保研", "考研", "深造", "就业", "考公"]);
+const supplementalDirections = new Map([
+  ["2019:刘洪堃", "深造"],
+  ["2022:陈信豪", "就业"],
+  ["2022:杨东明", "就业"],
+  ["2022:李焕然", "就业"],
+  ["2022:罗永霖", "就业"],
+  ["2022:陈双彬", "就业"],
+  ["2022:杨博飞", "就业"],
+  ["2022:隋炀", "深造"],
+]);
+const outcomeOverrides = new Map([
+  ["2019:曹志鹏", "graduate-exam"],
+  ["2020:孙钰镒", "graduate-exam"],
+]);
 const generatedRecordsPath = resolve(process.cwd(), "src/data/member-records.generated.ts");
 const isBlankCell = (value) => value === null
   || value === undefined
@@ -33,11 +47,14 @@ const validatedCohort = (value, sourceRow) => {
   throw new Error(`Invalid cohort at Sheet1 row ${sourceRow}`);
 };
 
-export function mapOutcome(direction) {
+export function mapOutcome(direction, cohort, name) {
+  const outcomeOverride = outcomeOverrides.get(`${cohort}:${name}`);
+  if (outcomeOverride) return outcomeOverride;
+
   return {
     保研: "recommendation",
     考研: "graduate-exam",
-    深造: "graduate-exam",
+    深造: "further-study",
     就业: "employment",
     考公: "employment",
   }[direction.trim()];
@@ -65,9 +82,13 @@ export function normaliseRows(rows, merges = []) {
     const memberName = optionalText(name);
     if (!Number.isInteger(cohort) || !memberName) return [];
 
+    const supplementalDirection = supplementalDirections.get(
+      `${2000 + cohort}:${memberName}`,
+    ) ?? "";
+
     return [{
       cohort: 2000 + cohort,
-      direction,
+      direction: direction || supplementalDirection,
       major: optionalText(major),
       name: memberName,
       destination: optionalText(destination),
@@ -78,10 +99,10 @@ export function normaliseRows(rows, merges = []) {
 export function partitionRecords(records) {
   return records.reduce(
     (partitions, record) => {
-      if (record.cohort >= 2019 && record.cohort <= 2023) {
+      if (record.cohort >= 2019 && record.cohort <= 2022) {
         partitions.alumniMembers.push(record);
       }
-      if (record.cohort >= 2024 && record.cohort <= 2025) {
+      if (record.cohort >= 2023 && record.cohort <= 2025) {
         partitions.currentMembers.push(record);
       }
       return partitions;
@@ -104,7 +125,7 @@ const renderMembers = (records) => renderRecords(records, (record, index) => {
 });
 
 const renderAlumni = (records) => renderRecords(records, (record, index) => {
-  const outcome = mapOutcome(record.direction);
+  const outcome = mapOutcome(record.direction, record.cohort, record.name);
   const fields = [
     outcome && `    outcome: ${text(outcome)},`,
     record.destination && `    organization: ${text(record.destination)},`,
@@ -179,20 +200,20 @@ export function validateWorkbook(rows, merges = []) {
   if (sourceRecords.some((record) => record.cohort < 2019 || record.cohort > 2025)) {
     throw new Error("Member cohorts must be 2019 through 2025");
   }
-  if (records.currentMembers.length !== 23) {
-    throw new Error(`Expected 23 current members, found ${records.currentMembers.length}`);
+  if (records.currentMembers.length !== 35) {
+    throw new Error(`Expected 35 current members, found ${records.currentMembers.length}`);
   }
-  if (records.alumniMembers.length !== 65) {
-    throw new Error(`Expected 65 alumni members, found ${records.alumniMembers.length}`);
+  if (records.alumniMembers.length !== 53) {
+    throw new Error(`Expected 53 alumni members, found ${records.alumniMembers.length}`);
   }
 
   const currentCohorts = new Set(records.currentMembers.map((record) => record.cohort));
   const alumniCohorts = new Set(records.alumniMembers.map((record) => record.cohort));
-  if (currentCohorts.size !== 2 || !currentCohorts.has(2024) || !currentCohorts.has(2025)) {
-    throw new Error("Current member cohorts must be 2024 and 2025");
+  if (currentCohorts.size !== 3 || [2023, 2024, 2025].some((cohort) => !currentCohorts.has(cohort))) {
+    throw new Error("Current member cohorts must be 2023 through 2025");
   }
-  if (alumniCohorts.size !== 5 || [2019, 2020, 2021, 2022, 2023].some((cohort) => !alumniCohorts.has(cohort))) {
-    throw new Error("Alumni cohorts must be 2019 through 2023");
+  if (alumniCohorts.size !== 4 || [2019, 2020, 2021, 2022].some((cohort) => !alumniCohorts.has(cohort))) {
+    throw new Error("Alumni cohorts must be 2019 through 2022");
   }
 
   return records;
