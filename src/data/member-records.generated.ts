@@ -75,7 +75,7 @@ export const generatedMembers: Member[] = [
     bio: "软工",
   },
   {
-    id: "member-11",
+    id: "member-9",
     name: "孟令宇",
     cohort: 2023,
     role: "2023 级",
@@ -84,7 +84,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-12",
+    id: "member-10",
     name: "刁俊熙",
     cohort: 2023,
     role: "2023 级",
@@ -93,7 +93,7 @@ export const generatedMembers: Member[] = [
     bio: "土木工程",
   },
   {
-    id: "member-13",
+    id: "member-11",
     name: "龚云飞",
     cohort: 2024,
     role: "2024 级",
@@ -102,7 +102,7 @@ export const generatedMembers: Member[] = [
     bio: "软工",
   },
   {
-    id: "member-14",
+    id: "member-12",
     name: "霍奂鑫",
     cohort: 2024,
     role: "2024 级",
@@ -111,7 +111,7 @@ export const generatedMembers: Member[] = [
     bio: "计科",
   },
   {
-    id: "member-15",
+    id: "member-13",
     name: "刘鸿春",
     cohort: 2024,
     role: "2024 级",
@@ -120,7 +120,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-16",
+    id: "member-14",
     name: "陈昱璋",
     cohort: 2024,
     role: "2024 级",
@@ -129,7 +129,7 @@ export const generatedMembers: Member[] = [
     bio: "软工",
   },
   {
-    id: "member-17",
+    id: "member-15",
     name: "鲍怡君",
     cohort: 2024,
     role: "2024 级",
@@ -138,7 +138,7 @@ export const generatedMembers: Member[] = [
     bio: "计科",
   },
   {
-    id: "member-18",
+    id: "member-16",
     name: "唐韵梅",
     cohort: 2024,
     role: "2024 级",
@@ -147,7 +147,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-19",
+    id: "member-17",
     name: "曾权君",
     cohort: 2024,
     role: "2024 级",
@@ -156,7 +156,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-20",
+    id: "member-18",
     name: "郝华溢",
     cohort: 2024,
     role: "2024 级",
@@ -165,7 +165,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-21",
+    id: "member-19",
     name: "徐绮",
     cohort: 2024,
     role: "2024 级",
@@ -174,7 +174,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-22",
+    id: "member-20",
     name: "宁靖阳",
     cohort: 2024,
     role: "2024 级",
@@ -183,7 +183,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-23",
+    id: "member-21",
     name: "匡思进",
     cohort: 2024,
     role: "2024 级",
@@ -192,7 +192,7 @@ export const generatedMembers: Member[] = [
     bio: "物联网",
   },
   {
-    id: "member-24",
+    id: "member-22",
     name: "邹梓熙",
     cohort: 2024,
     role: "2024 级",
@@ -201,7 +201,7 @@ export const generatedMembers: Member[] = [
     bio: "软工",
   },
   {
-    id: "member-25",
+    id: "member-23",
     name: "王硕",
     cohort: 2025,
     role: "2025 级",
@@ -209,7 +209,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E7%8E%8B%E7%A1%95&radius=50",
   },
   {
-    id: "member-26",
+    id: "member-24",
     name: "赵亦康",
     cohort: 2025,
     role: "2025 级",
@@ -217,7 +217,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E8%B5%B5%E4%BA%A6%E5%BA%B7&radius=50",
   },
   {
-    id: "member-27",
+    id: "member-25",
     name: "朱俊豪",
     cohort: 2025,
     role: "2025 级",
@@ -225,7 +225,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E6%9C%B1%E4%BF%8A%E8%B1%AA&radius=50",
   },
   {
-    id: "member-28",
+    id: "member-26",
     name: "黄禹霖",
     cohort: 2025,
     role: "2025 级",
@@ -233,7 +233,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E9%BB%84%E7%A6%B9%E9%9C%96&radius=50",
   },
   {
-    id: "member-29",
+    id: "member-27",
     name: "付豪",
     cohort: 2025,
     role: "2025 级",
@@ -241,7 +241,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E4%BB%98%E8%B1%AA&radius=50",
   },
   {
-    id: "member-30",
+    id: "member-28",
     name: "铉绍辉",
     cohort: 2025,
     role: "2025 级",
@@ -249,7 +249,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E9%93%89%E7%BB%8D%E8%BE%89&radius=50",
   },
   {
-    id: "member-31",
+    id: "member-29",
     name: "赵佳琦",
     cohort: 2025,
     role: "2025 级",
@@ -257,7 +257,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E8%B5%B5%E4%BD%B3%E7%90%A6&radius=50",
   },
   {
-    id: "member-32",
+    id: "member-30",
     name: "代泽阳",
     cohort: 2025,
     role: "2025 级",
@@ -265,7 +265,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E4%BB%A3%E6%B3%BD%E9%98%B3&radius=50",
   },
   {
-    id: "member-33",
+    id: "member-31",
     name: "汪美琳",
     cohort: 2025,
     role: "2025 级",
@@ -273,7 +273,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E6%B1%AA%E7%BE%8E%E7%90%B3&radius=50",
   },
   {
-    id: "member-34",
+    id: "member-32",
     name: "罗闽渝",
     cohort: 2025,
     role: "2025 级",
@@ -281,7 +281,7 @@ export const generatedMembers: Member[] = [
     avatar: "https://api.dicebear.com/9.x/pixel-art/svg?seed=%E7%BD%97%E9%97%BD%E6%B8%9D&radius=50",
   },
   {
-    id: "member-35",
+    id: "member-33",
     name: "林佳政",
     cohort: 2025,
     role: "2025 级",

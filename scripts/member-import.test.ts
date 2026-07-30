@@ -48,7 +48,7 @@ const validRows = [
     index < 12 ? "23级" : index < 24 ? "24级" : "25级",
     "",
     "软件工程",
-    `在读${index + 1}`,
+    ["蒋京玲", "罗乙番"][index] ?? `在读${index + 1}`,
     "",
   ]),
 ];
@@ -260,7 +260,7 @@ describe("member workbook normalization", () => {
     const originalOutput = "export const preserved = true;\n";
     await writeFile(outputPath, originalOutput);
 
-    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/35 current/i);
+    await expect(importMembers(inputPath, outputPath)).rejects.toThrow(/33 current/i);
     await expect(readFile(outputPath, "utf8")).resolves.toBe(originalOutput);
   });
 
@@ -355,20 +355,29 @@ describe("member workbook normalization", () => {
     },
   );
 
-  it("writes the 35/53 partitions into one generated records module", async () => {
+  it("writes the 33/53 partitions into one generated records module", async () => {
     const directory = await mkdtemp(join(tmpdir(), "member-import-"));
     const inputPath = await createWorkbook(directory, [expectedHeaders, ...validRows]);
     const outputPath = join(directory, "member-records.generated.ts");
 
-    await expect(importMembers(inputPath, outputPath)).resolves.toMatchObject({
-      currentMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2023 })]),
-      alumniMembers: expect.arrayContaining([expect.objectContaining({ cohort: 2019 })]),
-    });
+    const records = await importMembers(inputPath, outputPath);
+
+    expect(records.currentMembers).toHaveLength(33);
+    expect(records.currentMembers).toEqual(expect.arrayContaining([
+      expect.objectContaining({ cohort: 2023 }),
+    ]));
+    expect(records.currentMembers.map((record) => record.name)).not.toContain("蒋京玲");
+    expect(records.currentMembers.map((record) => record.name)).not.toContain("罗乙番");
+    expect(records.alumniMembers).toEqual(expect.arrayContaining([
+      expect.objectContaining({ cohort: 2019 }),
+    ]));
     const generatedOutput = await readFile(outputPath, "utf8");
     expect(generatedOutput).toContain("export const generatedMembers");
     expect(generatedOutput).toContain("export const generatedAlumniMembers");
-    expect(generatedOutput.match(/id: "member-/g)).toHaveLength(35);
+    expect(generatedOutput.match(/id: "member-/g)).toHaveLength(33);
     expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(53);
+    expect(generatedOutput).not.toContain("蒋京玲");
+    expect(generatedOutput).not.toContain("罗乙番");
   });
 
   it.skipIf(process.env.MEMBER_SOURCE_CONFIG_PROBE === "1").each([
@@ -407,20 +416,22 @@ describe("member workbook normalization", () => {
   }
 
   it.runIf(sourceWorkbookIsReadable && !sourceWorkbookConfigurationError)(
-    "imports the real source workbook into 35/53 partitions",
+    "imports the real source workbook into 33/53 partitions",
     async () => {
       const directory = await mkdtemp(join(tmpdir(), "member-import-"));
       const outputPath = join(directory, "member-records.generated.ts");
 
       const records = await importMembers(sourceWorkbookPath, outputPath);
 
-      expect(records.currentMembers).toHaveLength(35);
+      expect(records.currentMembers).toHaveLength(33);
       expect(records.alumniMembers).toHaveLength(53);
       expect(records.currentMembers).toEqual(expect.arrayContaining([
         { cohort: 2023, direction: "就业", major: "软工", name: "陈居浩", destination: "美团" },
         { cohort: 2024, direction: "", major: "软工", name: "龚云飞", destination: "" },
         { cohort: 2025, direction: "", major: "", name: "王硕", destination: "" },
       ]));
+      expect(records.currentMembers.map((record) => record.name)).not.toContain("蒋京玲");
+      expect(records.currentMembers.map((record) => record.name)).not.toContain("罗乙番");
       expect(records.alumniMembers).toContainEqual({
         cohort: 2019,
         direction: "深造",
@@ -433,6 +444,8 @@ describe("member workbook normalization", () => {
         { cohort: 2022, direction: "深造", major: "物联网", name: "隋炀", destination: "天津大学" },
       ]));
       const generatedOutput = await readFile(outputPath, "utf8");
+      expect(generatedOutput).not.toContain("蒋京玲");
+      expect(generatedOutput).not.toContain("罗乙番");
       const goldenOutput = await readFile(
         join(process.cwd(), "src/data/member-records.generated.ts"),
         "utf8",

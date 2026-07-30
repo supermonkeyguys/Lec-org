@@ -19,6 +19,10 @@ const outcomeOverrides = new Map([
   ["2019:曹志鹏", "graduate-exam"],
   ["2020:孙钰镒", "graduate-exam"],
 ]);
+const excludedSourceRecordKeys = new Set([
+  "2023:蒋京玲",
+  "2023:罗乙番",
+]);
 const generatedRecordsPath = resolve(process.cwd(), "src/data/member-records.generated.ts");
 const isBlankCell = (value) => value === null
   || value === undefined
@@ -194,14 +198,17 @@ export function validateWorkbook(rows, merges = []) {
 
   const dataRows = rows.slice(1);
   validateSourceRows(dataRows, merges);
-  const sourceRecords = normaliseRows(dataRows, merges);
+  const normalisedRecords = normaliseRows(dataRows, merges);
+  const sourceRecords = normalisedRecords.filter(
+    (record) => !excludedSourceRecordKeys.has(`${record.cohort}:${record.name}`),
+  );
   const records = partitionRecords(sourceRecords);
 
   if (sourceRecords.some((record) => record.cohort < 2019 || record.cohort > 2025)) {
     throw new Error("Member cohorts must be 2019 through 2025");
   }
-  if (records.currentMembers.length !== 35) {
-    throw new Error(`Expected 35 current members, found ${records.currentMembers.length}`);
+  if (records.currentMembers.length !== 33) {
+    throw new Error(`Expected 33 current members, found ${records.currentMembers.length}`);
   }
   if (records.alumniMembers.length !== 53) {
     throw new Error(`Expected 53 alumni members, found ${records.alumniMembers.length}`);
