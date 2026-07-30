@@ -173,6 +173,8 @@ it("shows current members without destinations and labels 2022 outcomes", () => 
 
   const currentMember = screen.getByRole("heading", { name: "陈居浩" }).closest("article");
   expect(currentMember).not.toHaveTextContent("美团");
+  expect(screen.queryByRole("heading", { name: "蒋京玲" })).not.toBeInTheDocument();
+  expect(screen.queryByRole("heading", { name: "罗乙番" })).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("tab", { name: "2022级" }));
 
