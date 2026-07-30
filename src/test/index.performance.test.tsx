@@ -15,14 +15,18 @@ class IntersectionObserverMock {
   unobserve = vi.fn();
 }
 
+const AlumniDynamicMock = ({ id = "alumni" }: { id?: string | null }) => (
+  <section {...(id ? { id } : {})} />
+);
+
+const EmptyDynamicMock = () => null;
+
 const dynamic = vi.fn((loader: () => Promise<unknown>) => {
   if (loader.toString().includes("Alumni")) {
-    return ({ id = "alumni" }: { id?: string | null }) => (
-      <section {...(id ? { id } : {})} />
-    );
+    return AlumniDynamicMock;
   }
 
-  return () => null;
+  return EmptyDynamicMock;
 });
 vi.mock("next/dynamic", () => ({ default: dynamic }));
 
