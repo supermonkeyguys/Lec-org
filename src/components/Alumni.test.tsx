@@ -16,6 +16,16 @@ vi.mock("framer-motion", () => ({
   ),
 }));
 
+it("keeps its standalone anchor by default and omits it when requested", () => {
+  const { container, rerender } = render(<Alumni />);
+
+  expect(container.querySelectorAll("#alumni")).toHaveLength(1);
+
+  rerender(<Alumni id={null} />);
+
+  expect(container.querySelectorAll("#alumni")).toHaveLength(0);
+});
+
 it("shows the newest grade by default and switches the visible alumni", () => {
   const newestGrade = 2025;
   const nextGrade = 2024;

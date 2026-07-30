@@ -22,6 +22,10 @@ type FeaturedMember = Pick<
   "id" | "name" | "cohort" | "outcome" | "organization"
 >;
 
+interface AlumniProps {
+  id?: string | null;
+}
+
 const featuredMembers: FeaturedMember[] = [
   ...members.map(({ id, name, cohort }) => ({ id, name, cohort })),
   ...alumniMembers,
@@ -36,7 +40,7 @@ const membersByCohort = Array.from(
   }, new Map<number, FeaturedMember[]>()),
 ).sort(([firstCohort], [secondCohort]) => secondCohort - firstCohort);
 
-export default function Alumni() {
+export default function Alumni({ id = "alumni" }: AlumniProps) {
   const [selectedGrade, setSelectedGrade] = useState(membersByCohort[0]?.[0]);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const reducedMotion = usePrefersReducedMotion();
@@ -74,7 +78,7 @@ export default function Alumni() {
 
   return (
     <SectionShell
-      id="alumni"
+      id={id}
       className="flex flex-col justify-center px-6 py-16"
     >
       <div className="mx-auto w-full max-w-5xl">

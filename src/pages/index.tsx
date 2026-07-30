@@ -21,7 +21,7 @@ export default function Home() {
       <Achievements />
       <Directions />
       <DeferredSection id="alumni" minHeight="100svh">
-        {() => <Alumni />}
+        {() => <Alumni id={null} />}
       </DeferredSection>
       <DeferredSection id="history" minHeight="100svh">
         {() => <Timeline id={null} />}
