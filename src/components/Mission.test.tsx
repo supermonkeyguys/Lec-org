@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { teamInfo } from "@/data/team";
 
@@ -49,4 +49,13 @@ it("shows the complete studio introduction", async () => {
   ).toBeVisible();
   expect(screen.getByText(/在电子科大、川大等知名大学继续深造/)).toBeVisible();
   expect(screen.getByText(/助力每一位成员在深造与就业路上少走弯路/)).toBeVisible();
+});
+
+it("opens the image viewer from the team photo wall", async () => {
+  const { default: Mission } = await import("./Mission");
+
+  render(<Mission />);
+
+  fireEvent.click(screen.getByRole("button", { name: "查看团队成员围坐火锅聚餐" }));
+  expect(screen.getByRole("dialog", { name: "查看团队成员围坐火锅聚餐" })).toBeVisible();
 });

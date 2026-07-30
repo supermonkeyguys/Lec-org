@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { teamInfo } from "@/data/team";
 import {
   itemFade,
@@ -7,6 +8,7 @@ import {
 } from "@/config/animations";
 import { responsiveImageProps } from "@/lib/responsiveImage";
 import SectionShell from "./SectionShell";
+import ImageViewer from "./ImageViewer";
 
 const emojis = ["👥", "🕒", "💬", "💻"];
 
@@ -16,6 +18,7 @@ interface MissionProps {
 
 export default function Mission({ id = "mission" }: MissionProps) {
   const reducedMotion = usePrefersReducedMotion();
+  const [selectedImage, setSelectedImage] = useState<(typeof teamInfo.aboutImages)[number] | null>(null);
 
   return (
     <SectionShell id={id} className="flex flex-col justify-center py-16 px-6">
@@ -36,14 +39,21 @@ export default function Mission({ id = "mission" }: MissionProps) {
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 mb-12">
           {teamInfo.aboutImages.map((image) => (
-            <img
+            <button
+              aria-label={`查看${image.alt}`}
+              className="cursor-zoom-in rounded-2xl"
               key={image.alt}
-              {...responsiveImageProps(image.image, image.sizes)}
-              alt={image.alt}
-              loading="lazy"
-              decoding="async"
-              className="aspect-[4/3] w-full rounded-2xl object-cover sketchy-border-sm"
-            />
+              onClick={() => setSelectedImage(image)}
+              type="button"
+            >
+              <img
+                {...responsiveImageProps(image.image, image.sizes)}
+                alt={image.alt}
+                loading="lazy"
+                decoding="async"
+                className="aspect-[4/3] w-full rounded-2xl object-cover sketchy-border-sm"
+              />
+            </button>
           ))}
         </div>
 
@@ -67,6 +77,7 @@ export default function Mission({ id = "mission" }: MissionProps) {
             </motion.div>
           ))}
         </div>
+        <ImageViewer image={selectedImage} onClose={() => setSelectedImage(null)} />
       </div>
     </SectionShell>
   );
