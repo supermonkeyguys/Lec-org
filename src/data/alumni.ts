@@ -20,7 +20,7 @@ export const outcomeLabels: Record<AlumniOutcome, string> = {
 
 export const alumniContent = {
   eyebrow: "Alumni Outcomes",
-  title: "往届优秀成员",
+  title: "团队成员",
   statusMessage: "优秀成员资料整理中",
   emptyMessage: "优秀成员资料整理中",
 } as const;

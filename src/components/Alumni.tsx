@@ -11,7 +11,7 @@ import { cardReveal, usePrefersReducedMotion } from "@/config/animations";
 import SectionShell from "./SectionShell";
 
 const outcomeClassNames: Record<AlumniOutcome, string> = {
-  recommendation: "bg-sky-100 text-sky-700",
+  recommendation: "bg-violet-100 text-violet-700",
   "graduate-exam": "bg-violet-100 text-violet-700",
   "further-study": "bg-violet-100 text-violet-700",
   employment: "bg-emerald-100 text-emerald-700",

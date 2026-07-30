@@ -122,7 +122,7 @@ it("retains graduate-exam classifications behind unified further-study labels", 
 it("groups alumni by cohort and exposes their outcomes", () => {
   const { container } = render(<Alumni />);
 
-  expect(screen.getByRole("heading", { name: "往届优秀成员" })).toBeVisible();
+  expect(screen.getByRole("heading", { name: "团队成员" })).toBeVisible();
   expect(screen.getByRole("tab", { name: "2023级" })).toBeVisible();
   expect(screen.queryByRole("tab", { name: "2026级" })).not.toBeInTheDocument();
   expect(screen.queryByRole("heading", { name: "刘洪堃" })).not.toBeInTheDocument();
@@ -140,6 +140,15 @@ it("groups alumni by cohort and exposes their outcomes", () => {
   expect(screen.getByRole("heading", { name: "蒋曾慧" }).closest("article")).toHaveTextContent(
     "深造",
   );
+  for (const name of ["刘洪堃", "岳筱涵", "蒋曾慧"]) {
+    const card = screen.getByRole("heading", { name }).closest("article");
+    if (!card) throw new Error(`Expected a card for ${name}`);
+
+    expect(card.querySelector("span.rounded-full.px-2")).toHaveClass(
+      "bg-violet-100",
+      "text-violet-700",
+    );
+  }
   expect(screen.queryByText("物联网")).not.toBeInTheDocument();
 
   expect(screen.queryByRole("heading", { name: "张峰" })).not.toBeInTheDocument();
