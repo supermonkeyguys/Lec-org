@@ -1,9 +1,10 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { teamInfo } from "@/data/team";
 
-const dynamicViewer = vi.hoisted(() => ({
+const imageViewerLoader = vi.hoisted(() => ({
+  loadImageViewer: vi.fn(),
   renders: [] as Array<{ image: unknown; onClose: unknown }>,
 }));
 
@@ -18,15 +19,18 @@ vi.mock("framer-motion", () => ({
   ),
 }));
 
-vi.mock("next/dynamic", () => ({
-  default: () => (props: { image: unknown; onClose: unknown }) => {
-    dynamicViewer.renders.push(props);
-    return null;
-  },
-}));
+vi.mock("./imageViewerLoader", () => {
+  return {
+    loadImageViewer: imageViewerLoader.loadImageViewer,
+  };
+});
+
+beforeEach(() => {
+  imageViewerLoader.loadImageViewer.mockReset();
+  imageViewerLoader.renders.length = 0;
+});
 
 afterEach(() => {
-  dynamicViewer.renders.length = 0;
   vi.unstubAllEnvs();
   vi.resetModules();
 });
@@ -63,18 +67,42 @@ it("shows the complete studio introduction", async () => {
   expect(screen.getByText(/助力每一位成员在深造与就业路上少走弯路/)).toBeVisible();
 });
 
-it("mounts the dynamic image viewer only after selecting a team photo", async () => {
+it("loads and mounts the viewer only after selecting a team photo", async () => {
+  const Viewer = (props: { image: unknown; onClose: unknown }) => {
+    imageViewerLoader.renders.push(props);
+    return null;
+  };
+  imageViewerLoader.loadImageViewer.mockResolvedValue(Viewer);
   const { default: Mission } = await import("./Mission");
 
   render(<Mission />);
 
-  expect(dynamicViewer.renders).toHaveLength(0);
+  expect(imageViewerLoader.loadImageViewer).not.toHaveBeenCalled();
+  expect(imageViewerLoader.renders).toHaveLength(0);
 
   fireEvent.click(screen.getByRole("button", { name: "查看团队成员围坐火锅聚餐" }));
 
-  expect(dynamicViewer.renders).toHaveLength(1);
-  expect(dynamicViewer.renders[0]).toMatchObject({
-    image: teamInfo.aboutImages[0],
-    onClose: expect.any(Function),
+  await waitFor(() => {
+    expect(imageViewerLoader.loadImageViewer).toHaveBeenCalledTimes(1);
+    expect(imageViewerLoader.renders).toHaveLength(1);
+    expect(imageViewerLoader.renders[0]).toMatchObject({
+      image: teamInfo.aboutImages[0],
+      onClose: expect.any(Function),
+    });
   });
+});
+
+it("shows a refresh instruction when the viewer module fails to load", async () => {
+  imageViewerLoader.loadImageViewer.mockRejectedValue(
+    new Error("ImageViewer failed to load"),
+  );
+  const { default: Mission } = await import("./Mission");
+
+  render(<Mission />);
+
+  fireEvent.click(screen.getByRole("button", { name: "查看团队成员围坐火锅聚餐" }));
+
+  expect(await screen.findByRole("status")).toHaveTextContent(
+    "图片查看器加载失败，请刷新页面后重试。",
+  );
 });

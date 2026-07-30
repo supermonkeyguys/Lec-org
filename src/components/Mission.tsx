@@ -1,16 +1,17 @@
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
 import { useState } from "react";
-import { teamInfo } from "@/data/team";
+import { teamInfo, type TeamAboutImage } from "@/data/team";
 import {
   itemFade,
   sectionFade,
   usePrefersReducedMotion,
 } from "@/config/animations";
 import { responsiveImageProps } from "@/lib/responsiveImage";
+import {
+  loadImageViewer,
+  type ImageViewerComponent,
+} from "./imageViewerLoader";
 import SectionShell from "./SectionShell";
-
-const ImageViewer = dynamic(() => import("./ImageViewer"), { ssr: false });
 
 const emojis = ["👥", "🕒", "💬", "💻"];
 
@@ -20,7 +21,18 @@ interface MissionProps {
 
 export default function Mission({ id = "mission" }: MissionProps) {
   const reducedMotion = usePrefersReducedMotion();
-  const [selectedImage, setSelectedImage] = useState<(typeof teamInfo.aboutImages)[number] | null>(null);
+  const [selectedImage, setSelectedImage] = useState<TeamAboutImage | null>(null);
+  const [ImageViewer, setImageViewer] = useState<ImageViewerComponent | null>(null);
+  const [viewerLoadFailed, setViewerLoadFailed] = useState(false);
+
+  const selectImage = (image: TeamAboutImage) => {
+    setSelectedImage(image);
+    setImageViewer(null);
+    setViewerLoadFailed(false);
+    void loadImageViewer()
+      .then((Viewer) => setImageViewer(() => Viewer))
+      .catch(() => setViewerLoadFailed(true));
+  };
 
   return (
     <SectionShell id={id} className="flex flex-col justify-center py-16 px-6">
@@ -45,7 +57,7 @@ export default function Mission({ id = "mission" }: MissionProps) {
               aria-label={`查看${image.alt}`}
               className="cursor-zoom-in rounded-2xl"
               key={image.alt}
-              onClick={() => setSelectedImage(image)}
+              onClick={() => selectImage(image)}
               type="button"
             >
               <img
@@ -79,7 +91,12 @@ export default function Mission({ id = "mission" }: MissionProps) {
             </motion.div>
           ))}
         </div>
-        {selectedImage ? <ImageViewer image={selectedImage} onClose={() => setSelectedImage(null)} /> : null}
+        {selectedImage && ImageViewer ? (
+          <ImageViewer image={selectedImage} onClose={() => setSelectedImage(null)} />
+        ) : null}
+        {viewerLoadFailed ? (
+          <p role="status">图片查看器加载失败，请刷新页面后重试。</p>
+        ) : null}
       </div>
     </SectionShell>
   );
