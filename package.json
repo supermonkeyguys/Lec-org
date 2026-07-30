@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "import:members": "node scripts/member-import.mjs",
+    "import:news": "node scripts/news-import.mjs",
     "optimize:images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {

@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
-import { historyContent, milestones } from "@/data/milestones";
+import { historyContent, recentActivities } from "@/data/milestones";
 import {
-  itemFade,
   sectionFade,
   usePrefersReducedMotion,
 } from "@/config/animations";
@@ -24,50 +23,23 @@ export default function Timeline({ id = "history" }: TimelineProps) {
           <h2 className="text-4xl sm:text-5xl font-bold text-ink text-center mb-4">
             {historyContent.title}
           </h2>
-          <p className="text-center text-muted mb-16 text-lg">
+          <p className="text-center text-muted mb-12 text-lg">
             {historyContent.subtitle}
-          </p>
-          <p className="mb-12 text-center font-mono text-xs text-fade">
-            {historyContent.statusLabel}
           </p>
         </motion.div>
 
-        <div className="relative">
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-ink/20 -translate-x-1/2" />
-
-          {milestones.map((milestone, i) => {
-            const isLeft = i % 2 === 0;
-            return (
-              <motion.div
-                key={milestone.id}
-                {...itemFade(Math.min(0.05 * i, 0.3), Boolean(reducedMotion))}
-                className="relative flex justify-center mb-12"
-              >
-                <div className="absolute left-1/2 w-3 h-3 bg-ink rounded-full -translate-x-1/2 mt-5 z-10" />
-
-                <div
-                  className={`w-full sm:w-[calc(50%-2rem)] ${
-                    isLeft ? "sm:mr-auto sm:pr-8 sm:text-right" : "sm:ml-auto sm:pl-8 sm:text-left"
-                  }`}
-                >
-                  <div className="sketchy-border bg-card p-5 text-left">
-                    <span className="font-mono text-sm text-muted">
-                      {milestone.dateLabel}
-                    </span>
-                    <h3 className="text-lg font-bold text-ink mt-1 mb-2">
-                      {milestone.title}
-                    </h3>
-                    <p className="text-muted text-base leading-relaxed">
-                      {milestone.description}
-                    </p>
-                    <p className="mt-3 font-mono text-xs text-fade">
-                      {milestone.sourceNote}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+        <div className="space-y-4">
+          {recentActivities.map((activity) => (
+            <article
+              key={activity.id}
+              className="sketchy-border bg-card flex flex-col gap-2 p-5 sm:flex-row sm:items-baseline sm:gap-8"
+            >
+              <time className="shrink-0 font-mono text-sm text-muted">
+                {activity.dateLabel}
+              </time>
+              <p className="text-base leading-relaxed text-ink">{activity.title}</p>
+            </article>
+          ))}
         </div>
       </div>
     </SectionShell>
