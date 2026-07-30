@@ -48,7 +48,12 @@ const validRows = [
     index < 12 ? "23级" : index < 24 ? "24级" : "25级",
     "",
     "软件工程",
-    ["蒋京玲", "罗乙番"][index] ?? `在读${index + 1}`,
+    new Map([
+      [0, "蒋京玲"],
+      [1, "罗乙番"],
+      [10, "孟令宇"],
+      [34, "林佳政"],
+    ]).get(index) ?? `在读${index + 1}`,
     "",
   ]),
 ];
@@ -378,6 +383,26 @@ describe("member workbook normalization", () => {
     expect(generatedOutput.match(/id: "alumni-/g)).toHaveLength(53);
     expect(generatedOutput).not.toContain("蒋京玲");
     expect(generatedOutput).not.toContain("罗乙番");
+    expect(generatedOutput).toContain('id: "member-11",\n    name: "孟令宇"');
+    expect(generatedOutput).toContain('id: "member-35",\n    name: "林佳政"');
+  });
+
+  it("retains a same-named record from a different cohort", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "member-import-"));
+    const rowsWithSameNamedAlumnus = validRows.map((row) => [...row]);
+    rowsWithSameNamedAlumnus[0][3] = "蒋京玲";
+    const inputPath = await createWorkbook(
+      directory,
+      [expectedHeaders, ...rowsWithSameNamedAlumnus],
+    );
+    const outputPath = join(directory, "member-records.generated.ts");
+
+    const records = await importMembers(inputPath, outputPath);
+
+    expect(records.alumniMembers).toContainEqual(
+      expect.objectContaining({ cohort: 2019, name: "蒋京玲" }),
+    );
+    await expect(readFile(outputPath, "utf8")).resolves.toContain('name: "蒋京玲"');
   });
 
   it.skipIf(process.env.MEMBER_SOURCE_CONFIG_PROBE === "1").each([

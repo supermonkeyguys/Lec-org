@@ -23,6 +23,7 @@ const excludedSourceRecordKeys = new Set([
   "2023:蒋京玲",
   "2023:罗乙番",
 ]);
+const generatedCurrentMemberIds = new WeakMap();
 const generatedRecordsPath = resolve(process.cwd(), "src/data/member-records.generated.ts");
 const isBlankCell = (value) => value === null
   || value === undefined
@@ -101,18 +102,23 @@ export function normaliseRows(rows, merges = []) {
 }
 
 export function partitionRecords(records) {
-  return records.reduce(
-    (partitions, record) => {
-      if (record.cohort >= 2019 && record.cohort <= 2022) {
-        partitions.alumniMembers.push(record);
-      }
-      if (record.cohort >= 2023 && record.cohort <= 2025) {
-        partitions.currentMembers.push(record);
-      }
-      return partitions;
-    },
-    { currentMembers: [], alumniMembers: [] },
-  );
+  const partitions = { currentMembers: [], alumniMembers: [] };
+  let currentMemberOrdinal = 0;
+
+  records.forEach((record) => {
+    if (record.cohort >= 2019 && record.cohort <= 2022) {
+      partitions.alumniMembers.push(record);
+    }
+    if (record.cohort >= 2023 && record.cohort <= 2025) {
+      currentMemberOrdinal += 1;
+      if (excludedSourceRecordKeys.has(`${record.cohort}:${record.name}`)) return;
+
+      generatedCurrentMemberIds.set(record, `member-${currentMemberOrdinal}`);
+      partitions.currentMembers.push(record);
+    }
+  });
+
+  return partitions;
 }
 
 const text = (value) => JSON.stringify(value);
@@ -124,8 +130,9 @@ const renderRecords = (records, renderRecord) => records
 const renderMembers = (records) => renderRecords(records, (record, index) => {
   const bio = record.major ? `\n    bio: ${text(record.major)},` : "";
   const avatar = `https://api.dicebear.com/9.x/pixel-art/svg?seed=${encodeURIComponent(record.name)}&radius=50`;
+  const id = generatedCurrentMemberIds.get(record) ?? `member-${index + 1}`;
 
-  return `  {\n    id: ${text(`member-${index + 1}`)},\n    name: ${text(record.name)},\n    cohort: ${record.cohort},\n    role: ${text(`${record.cohort} 级`)},\n    status: "current",\n    avatar: ${text(avatar)},${bio}\n  }`;
+  return `  {\n    id: ${text(id)},\n    name: ${text(record.name)},\n    cohort: ${record.cohort},\n    role: ${text(`${record.cohort} 级`)},\n    status: "current",\n    avatar: ${text(avatar)},${bio}\n  }`;
 });
 
 const renderAlumni = (records) => renderRecords(records, (record, index) => {
@@ -198,10 +205,7 @@ export function validateWorkbook(rows, merges = []) {
 
   const dataRows = rows.slice(1);
   validateSourceRows(dataRows, merges);
-  const normalisedRecords = normaliseRows(dataRows, merges);
-  const sourceRecords = normalisedRecords.filter(
-    (record) => !excludedSourceRecordKeys.has(`${record.cohort}:${record.name}`),
-  );
+  const sourceRecords = normaliseRows(dataRows, merges);
   const records = partitionRecords(sourceRecords);
 
   if (sourceRecords.some((record) => record.cohort < 2019 || record.cohort > 2025)) {
