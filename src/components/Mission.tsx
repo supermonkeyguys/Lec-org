@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Clock3, Code2, MessagesSquare, Users } from "lucide-react";
 import { useState } from "react";
 import { teamInfo, type TeamAboutImage } from "@/data/team";
 import {
@@ -13,7 +14,7 @@ import {
 } from "./imageViewerLoader";
 import SectionShell from "./SectionShell";
 
-const emojis = ["👥", "🕒", "💬", "💻"];
+const factIcons = [Users, Clock3, MessagesSquare, Code2];
 
 interface MissionProps {
   id?: string | null;
@@ -72,24 +73,30 @@ export default function Mission({ id = "mission" }: MissionProps) {
         </div>
 
         <div className="grid sm:grid-cols-2 gap-6">
-          {teamInfo.facts.map((fact, i) => (
-            <motion.div
-              key={fact.label}
-              {...itemFade(i * 0.1, Boolean(reducedMotion))}
-              className="sketchy-border bg-card p-6 text-center"
-            >
-              <div className="text-3xl mb-3">{emojis[i]}</div>
-              <h3 className="text-xl font-bold text-ink mb-2">
-                {fact.label}
-              </h3>
-              <p className="mb-2 font-mono text-lg font-bold text-ink">
-                {fact.value}
-              </p>
-              <p className="text-muted leading-relaxed">
-                {fact.description}
-              </p>
-            </motion.div>
-          ))}
+          {teamInfo.facts.map((fact, i) => {
+            const Icon = factIcons[i];
+
+            return (
+              <motion.div
+                key={fact.label}
+                {...itemFade(i * 0.1, Boolean(reducedMotion))}
+                className="sketchy-border bg-card p-6 text-center"
+              >
+                <div className="mb-3 flex justify-center text-ink">
+                  <Icon aria-hidden="true" size={22} strokeWidth={2.25} />
+                </div>
+                <h3 className="text-xl font-bold text-ink mb-2">
+                  {fact.label}
+                </h3>
+                <p className="mb-2 font-mono text-lg font-bold text-ink">
+                  {fact.value}
+                </p>
+                <p className="text-muted leading-relaxed">
+                  {fact.description}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
         {selectedImage && ImageViewer ? (
           <ImageViewer image={selectedImage} onClose={() => setSelectedImage(null)} />

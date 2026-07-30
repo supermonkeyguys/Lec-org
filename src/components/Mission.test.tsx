@@ -67,6 +67,15 @@ it("shows the complete studio introduction", async () => {
   expect(screen.getByText(/助力每一位成员在深造与就业路上少走弯路/)).toBeVisible();
 });
 
+it("renders decorative icons instead of team-profile emojis", async () => {
+  const { default: Mission } = await import("./Mission");
+
+  const { container } = render(<Mission />);
+
+  expect(screen.queryByText("👥")).not.toBeInTheDocument();
+  expect(container.querySelectorAll("svg[aria-hidden='true']")).toHaveLength(4);
+});
+
 it("loads and mounts the viewer only after selecting a team photo", async () => {
   const Viewer = (props: { image: unknown; onClose: unknown }) => {
     imageViewerLoader.renders.push(props);
