@@ -1,5 +1,12 @@
+export type TechnicalDirectionId =
+  | "full-stack"
+  | "agent-development"
+  | "game-development"
+  | "machine-learning"
+  | "graphics";
+
 export interface TechnicalDirection {
-  id: string;
+  id: TechnicalDirectionId;
   title: string;
   description: string;
 }
