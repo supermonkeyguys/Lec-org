@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { sections } from "@/config/sections";
+import { SiteNavigationContext } from "@/context/siteNavigation";
 import TopNav from "./TopNav";
 
 const keyboardScrollKeys = new Set([
@@ -104,15 +105,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
       <TopNav activeId={activeId} onNavigate={handleNavigate} />
-      <main
-        id="site-scroll-root"
-        ref={scrollRootRef}
-        aria-label="主内容分段滚动"
-        tabIndex={0}
-        className="site-scroll no-scrollbar h-[100svh] overflow-y-auto"
-      >
-        {children}
-      </main>
+      <SiteNavigationContext.Provider value={handleNavigate}>
+        <main
+          id="site-scroll-root"
+          ref={scrollRootRef}
+          aria-label="主内容分段滚动"
+          tabIndex={0}
+          className="site-scroll no-scrollbar h-[100svh] overflow-y-auto"
+        >
+          {children}
+        </main>
+      </SiteNavigationContext.Provider>
     </div>
   );
 }

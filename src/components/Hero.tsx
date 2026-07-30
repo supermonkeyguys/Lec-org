@@ -1,8 +1,11 @@
 import { teamInfo } from "@/data/team";
+import { useSiteNavigation } from "@/context/siteNavigation";
 import { assetPath } from "@/lib/assetPath";
 import SectionShell from "./SectionShell";
 
 export default function Hero() {
+  const navigateToSection = useSiteNavigation();
+
   return (
     <SectionShell
       id="hero"
@@ -36,6 +39,10 @@ export default function Hero() {
 
         <a
           href="#alumni"
+          onClick={(event) => {
+            event.preventDefault();
+            navigateToSection("alumni");
+          }}
           className="inline-block mt-12 sketchy-border bg-card px-8 py-3 text-ink no-underline font-mono text-sm hover:-translate-y-0.5 transition-transform"
         >
           {teamInfo.content.heroCta}
