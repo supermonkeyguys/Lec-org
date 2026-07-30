@@ -12,7 +12,11 @@ it("shows a selected image and closes from the close control, backdrop, or Escap
   const dialog = screen.getByRole("dialog", { name: `查看${image.alt}` });
   expect(dialog).toBeVisible();
   expect(screen.getByRole("img", { name: image.alt })).toBeVisible();
-  fireEvent.click(screen.getByRole("button", { name: "关闭图片查看" }));
+  const closeControl = screen.getByRole("button", { name: "关闭图片查看" });
+  expect(
+    closeControl.querySelector("svg[aria-hidden='true']"),
+  ).toBeInTheDocument();
+  fireEvent.click(closeControl);
   expect(onClose).toHaveBeenCalledTimes(1);
 
   fireEvent.click(dialog);
