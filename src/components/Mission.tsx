@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { teamInfo } from "@/data/team";
 import {
@@ -8,7 +9,8 @@ import {
 } from "@/config/animations";
 import { responsiveImageProps } from "@/lib/responsiveImage";
 import SectionShell from "./SectionShell";
-import ImageViewer from "./ImageViewer";
+
+const ImageViewer = dynamic(() => import("./ImageViewer"), { ssr: false });
 
 const emojis = ["👥", "🕒", "💬", "💻"];
 
@@ -77,7 +79,7 @@ export default function Mission({ id = "mission" }: MissionProps) {
             </motion.div>
           ))}
         </div>
-        <ImageViewer image={selectedImage} onClose={() => setSelectedImage(null)} />
+        {selectedImage ? <ImageViewer image={selectedImage} onClose={() => setSelectedImage(null)} /> : null}
       </div>
     </SectionShell>
   );

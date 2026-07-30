@@ -3,6 +3,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { teamInfo } from "@/data/team";
 
+const dynamicViewer = vi.hoisted(() => ({
+  renders: [] as Array<{ image: unknown; onClose: unknown }>,
+}));
+
 vi.mock("framer-motion", () => ({
   motion: new Proxy(
     {},
@@ -14,7 +18,15 @@ vi.mock("framer-motion", () => ({
   ),
 }));
 
+vi.mock("next/dynamic", () => ({
+  default: () => (props: { image: unknown; onClose: unknown }) => {
+    dynamicViewer.renders.push(props);
+    return null;
+  },
+}));
+
 afterEach(() => {
+  dynamicViewer.renders.length = 0;
   vi.unstubAllEnvs();
   vi.resetModules();
 });
@@ -51,11 +63,18 @@ it("shows the complete studio introduction", async () => {
   expect(screen.getByText(/助力每一位成员在深造与就业路上少走弯路/)).toBeVisible();
 });
 
-it("opens the image viewer from the team photo wall", async () => {
+it("mounts the dynamic image viewer only after selecting a team photo", async () => {
   const { default: Mission } = await import("./Mission");
 
   render(<Mission />);
 
+  expect(dynamicViewer.renders).toHaveLength(0);
+
   fireEvent.click(screen.getByRole("button", { name: "查看团队成员围坐火锅聚餐" }));
-  expect(screen.getByRole("dialog", { name: "查看团队成员围坐火锅聚餐" })).toBeVisible();
+
+  expect(dynamicViewer.renders).toHaveLength(1);
+  expect(dynamicViewer.renders[0]).toMatchObject({
+    image: teamInfo.aboutImages[0],
+    onClose: expect.any(Function),
+  });
 });
