@@ -33,6 +33,22 @@ export default function Achievements() {
           ))}
         </div>
 
+        <div
+          className="mt-10 grid gap-4 md:grid-cols-3"
+          aria-label="分年团队成就"
+        >
+          {achievementsContent.yearlyHighlights.map((highlight) => (
+            <article key={highlight.year} className="sketchy-border-sm bg-card p-5">
+              <h3 className="font-mono text-sm font-bold text-ink">
+                {highlight.year} 年
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                {highlight.details}
+              </p>
+            </article>
+          ))}
+        </div>
+
         <div className="mt-10 flex flex-wrap justify-center gap-3" aria-label="赛事标签">
           {achievementsContent.eventTags.map((eventTag) => (
             <span
