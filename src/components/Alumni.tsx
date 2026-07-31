@@ -136,39 +136,41 @@ export default function Alumni({ id = "alumni" }: AlumniProps) {
                 key={cohort}
                 role="tabpanel"
               >
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {cohortMembers.map((member, index) => (
-                    <motion.article
-                      key={member.id}
-                      {...cardReveal(Math.min(index * 0.05, 0.3), reducedMotion)}
-                      className="sketchy-border bg-card p-5"
-                    >
-                      <div className="flex items-start gap-4">
-                        <span
-                          aria-hidden="true"
-                          className="flex size-12 shrink-0 items-center justify-center rounded-full bg-ink/10 text-xl font-bold text-ink"
-                        >
-                          {member.name.slice(0, 1)}
-                        </span>
-                        <div>
-                          <div className="mb-2 flex flex-wrap items-center gap-2">
-                            <h4 className="text-lg font-bold text-ink">{member.name}</h4>
-                            {member.outcome && (
-                              <span
-                                className={`rounded-full px-2 py-0.5 font-mono text-xs ${outcomeClassNames[member.outcome]}`}
-                              >
-                                {outcomeLabels[member.outcome]}
-                              </span>
+                {selectedGrade === cohort && (
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {cohortMembers.map((member, index) => (
+                      <motion.article
+                        key={member.id}
+                        {...cardReveal(Math.min(index * 0.05, 0.3), reducedMotion)}
+                        className="sketchy-border bg-card p-5"
+                      >
+                        <div className="flex items-start gap-4">
+                          <span
+                            aria-hidden="true"
+                            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-ink/10 text-xl font-bold text-ink"
+                          >
+                            {member.name.slice(0, 1)}
+                          </span>
+                          <div>
+                            <div className="mb-2 flex flex-wrap items-center gap-2">
+                              <h4 className="text-lg font-bold text-ink">{member.name}</h4>
+                              {member.outcome && (
+                                <span
+                                  className={`rounded-full px-2 py-0.5 font-mono text-xs ${outcomeClassNames[member.outcome]}`}
+                                >
+                                  {outcomeLabels[member.outcome]}
+                                </span>
+                              )}
+                            </div>
+                            {member.organization && (
+                              <p className="text-muted">{member.organization}</p>
                             )}
                           </div>
-                          {member.organization && (
-                            <p className="text-muted">{member.organization}</p>
-                          )}
                         </div>
-                      </div>
-                    </motion.article>
-                  ))}
-                </div>
+                      </motion.article>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

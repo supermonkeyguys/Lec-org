@@ -5,13 +5,36 @@ import Alumni from "./Alumni";
 import { alumniMembers } from "@/data/alumni";
 import { members } from "@/data/members";
 
+const motionMockState = vi.hoisted(() => ({
+  nextInstance: 0,
+  components: new Map(),
+}));
+
 vi.mock("framer-motion", () => ({
   motion: new Proxy(
     {},
     {
-      get: (_target, element: string) =>
-        ({ children, ...props }: React.HTMLAttributes<HTMLElement>) =>
-          React.createElement(element, props, children),
+      get: (_target, element: string) => {
+        const existingComponent = motionMockState.components.get(element);
+        if (existingComponent) return existingComponent;
+
+        const MotionElement = ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => {
+          const instanceRef = React.useRef<number | null>(null);
+          if (instanceRef.current === null) {
+            motionMockState.nextInstance += 1;
+            instanceRef.current = motionMockState.nextInstance;
+          }
+
+          return React.createElement(
+            element,
+            { ...props, "data-motion-instance": instanceRef.current },
+            children,
+          );
+        };
+
+        motionMockState.components.set(element, MotionElement);
+        return MotionElement;
+      },
     },
   ),
 }));
@@ -75,6 +98,24 @@ it("shows the newest grade by default and switches the visible alumni", () => {
   );
   expect(screen.getByRole("heading", { name: nextMember.name })).toBeVisible();
   expect(screen.queryByRole("heading", { name: newestMember.name })).not.toBeInTheDocument();
+});
+
+it("restarts the card reveal when a grade is selected again", () => {
+  const newestGrade = 2025;
+  const nextGrade = 2024;
+  const newestMember = members.find((member) => member.cohort === newestGrade);
+
+  if (!newestMember) throw new Error("Expected alumni data for the newest grade");
+
+  render(<Alumni />);
+
+  const initialInstance = screen.getByRole("heading", { name: newestMember.name })
+    .closest("article")?.getAttribute("data-motion-instance");
+  fireEvent.click(screen.getByRole("tab", { name: `${nextGrade}级` }));
+  fireEvent.click(screen.getByRole("tab", { name: `${newestGrade}级` }));
+
+  expect(screen.getByRole("heading", { name: newestMember.name }).closest("article"))
+    .not.toHaveAttribute("data-motion-instance", initialInstance ?? "");
 });
 
 it("keeps every tab panel in the DOM and hides the non-selected panels", () => {
