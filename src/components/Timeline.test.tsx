@@ -10,12 +10,12 @@ it("renders every activity in an internal scroll region", () => {
   expect(screen.getAllByRole("article")).toHaveLength(143);
   expect(screen.getByTestId("activity-scroll-region")).toHaveClass(
     "sketchy-border",
-    "bg-card",
     "p-4",
     "no-scrollbar",
     "max-h-[60svh]",
     "overflow-y-auto",
   );
+  expect(screen.getByTestId("activity-scroll-region")).not.toHaveClass("bg-card");
   expect(screen.queryByRole("button", { name: /加载更多/ })).not.toBeInTheDocument();
   expect(screen.queryByText(/临时展示|正式历史资料待补充/)).not.toBeInTheDocument();
 });

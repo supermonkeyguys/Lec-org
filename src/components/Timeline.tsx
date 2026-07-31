@@ -30,7 +30,7 @@ export default function Timeline({ id = "history" }: TimelineProps) {
 
         <div
           aria-label="动态时间线"
-          className="sketchy-border bg-card no-scrollbar max-h-[60svh] overflow-y-auto p-4"
+          className="sketchy-border no-scrollbar max-h-[60svh] overflow-y-auto p-4"
           data-testid="activity-scroll-region"
           tabIndex={0}
         >
