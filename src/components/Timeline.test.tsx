@@ -9,6 +9,9 @@ it("renders every activity in an internal scroll region", () => {
   expect(screen.getAllByRole("article")[0]).toHaveTextContent("祝陈居浩生日快乐");
   expect(screen.getAllByRole("article")).toHaveLength(143);
   expect(screen.getByTestId("activity-scroll-region")).toHaveClass(
+    "sketchy-border",
+    "bg-card",
+    "p-4",
     "no-scrollbar",
     "max-h-[60svh]",
     "overflow-y-auto",
